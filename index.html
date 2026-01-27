@@ -357,6 +357,50 @@
       <div class="sep"></div>
       <div class="mono">Colnet ON: ${p.on_s}s • Intervalo: ${intervalo}</div>
     `;
+    function timeToMinutes(hhmm){
+    const [h,m] = hhmm.split(":").map(Number);
+    return h*60 + m;
+  }
+
+  function nowMinutes(){
+    const d = new Date();
+    return d.getHours()*60 + d.getMinutes();
+  }
+
+  // Decide qual programa (P1–P7) vale agora, baseado no relógio do celular
+  function detectProgramaIndex(){
+    const t = nowMinutes();
+
+    // Intervalos conforme sua tabela:
+    // P1 08:00–10:00
+    // P2 10:00–12:00
+    // P3 12:00–15:00
+    // P4 15:00–16:00
+    // P5 16:00–17:30
+    // P6 17:30–19:30
+    // P7 19:30–21:00
+    // Fora disso: mantém o último, ou cai no P7 (sanitário/noite)
+
+    if (t >= timeToMinutes("08:00") && t < timeToMinutes("10:00")) return 0; // P1
+    if (t >= timeToMinutes("10:00") && t < timeToMinutes("12:00")) return 1; // P2
+    if (t >= timeToMinutes("12:00") && t < timeToMinutes("15:00")) return 2; // P3
+    if (t >= timeToMinutes("15:00") && t < timeToMinutes("16:00")) return 3; // P4
+    if (t >= timeToMinutes("16:00") && t < timeToMinutes("17:30")) return 4; // P5
+    if (t >= timeToMinutes("17:30") && t < timeToMinutes("19:30")) return 5; // P6
+    if (t >= timeToMinutes("19:30") && t < timeToMinutes("21:00")) return 6; // P7
+
+    // Fora do range (noite/madrugada): usa P7 como padrão
+    return 6;
+  }
+
+  function autoSelectPrograma(){
+    const sel = document.getElementById("prog");
+    const idx = detectProgramaIndex();
+    if (String(sel.value) !== String(idx)){
+      sel.value = String(idx);
+      renderProgramaInfo();
+      calcular(false);
+    }
   }
 
   function pill(status, text){
@@ -479,51 +523,6 @@
         Se quiser, eu adiciono: (1) seleção automática do P1–P7 pelo relógio, (2) botão “Registrar ação” e histórico diário.
       </div>
     `;
-  }
-    function timeToMinutes(hhmm){
-    const [h,m] = hhmm.split(":").map(Number);
-    return h*60 + m;
-  }
-
-  function nowMinutes(){
-    const d = new Date();
-    return d.getHours()*60 + d.getMinutes();
-  }
-
-  // Decide qual programa (P1–P7) vale agora, baseado no relógio do celular
-  function detectProgramaIndex(){
-    const t = nowMinutes();
-
-    // Intervalos conforme sua tabela:
-    // P1 08:00–10:00
-    // P2 10:00–12:00
-    // P3 12:00–15:00
-    // P4 15:00–16:00
-    // P5 16:00–17:30
-    // P6 17:30–19:30
-    // P7 19:30–21:00
-    // Fora disso: mantém o último, ou cai no P7 (sanitário/noite)
-
-    if (t >= timeToMinutes("08:00") && t < timeToMinutes("10:00")) return 0; // P1
-    if (t >= timeToMinutes("10:00") && t < timeToMinutes("12:00")) return 1; // P2
-    if (t >= timeToMinutes("12:00") && t < timeToMinutes("15:00")) return 2; // P3
-    if (t >= timeToMinutes("15:00") && t < timeToMinutes("16:00")) return 3; // P4
-    if (t >= timeToMinutes("16:00") && t < timeToMinutes("17:30")) return 4; // P5
-    if (t >= timeToMinutes("17:30") && t < timeToMinutes("19:30")) return 5; // P6
-    if (t >= timeToMinutes("19:30") && t < timeToMinutes("21:00")) return 6; // P7
-
-    // Fora do range (noite/madrugada): usa P7 como padrão
-    return 6;
-  }
-
-  function autoSelectPrograma(){
-    const sel = document.getElementById("prog");
-    const idx = detectProgramaIndex();
-    if (String(sel.value) !== String(idx)){
-      sel.value = String(idx);
-      renderProgramaInfo();
-      calcular(false);
-    }
   }
 
 
