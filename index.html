@@ -33,7 +33,7 @@ body{
   padding: 16px;
 }
 
-.wrap{ max-width: 820px; margin: 0 auto; }
+.wrap{ max-width: 920px; margin: 0 auto; }
 
 .top{
   background: linear-gradient(135deg, var(--bg1), var(--bg2));
@@ -50,6 +50,7 @@ body{
   background: rgba(255,255,255,.18);
   display:grid;place-items:center;
   border: 1px solid rgba(255,255,255,.25);
+  font-size:22px;
 }
 
 .top h1{ margin:0; font-size: 18px; }
@@ -57,11 +58,11 @@ body{
 
 .grid{
   display:grid;
-  grid-template-columns: 1.1fr .9fr;
+  grid-template-columns: 1.15fr .85fr;
   gap: 14px;
   margin-top: 14px;
 }
-@media (max-width: 860px){
+@media (max-width: 980px){
   .grid{ grid-template-columns: 1fr; }
 }
 
@@ -83,7 +84,7 @@ body{
 
 label{
   display:block;
-  font-weight: 700;
+  font-weight: 800;
   font-size: 12.5px;
   margin: 10px 0 6px;
 }
@@ -112,8 +113,9 @@ input:focus, select:focus{
   padding: 10px 12px;
   cursor:pointer;
   display:flex; align-items:center; gap:10px;
-  min-width: 160px;
+  min-width: 170px;
   transition: .15s ease;
+  font-weight:800;
 }
 
 .mBtn.active{
@@ -124,13 +126,17 @@ input:focus, select:focus{
 .mTag{
   width:34px;height:34px;border-radius:12px;
   display:grid;place-items:center;
-  color:#fff;font-weight:800;
+  color:#fff;font-weight:900;
   background: linear-gradient(135deg, #22c55e, #0ea5e9);
 }
 .mBtn[data-m="2"] .mTag{ background: linear-gradient(135deg, #f59e0b, #ef4444); }
 .mBtn[data-m="3"] .mTag{ background: linear-gradient(135deg, #7c3aed, #1f6feb); }
 
 .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+@media (max-width: 520px){
+  .row2{ grid-template-columns: 1fr; }
+  .mBtn{ min-width: 100%; }
+}
 
 .btnMain{
   width:100%;
@@ -138,12 +144,33 @@ input:focus, select:focus{
   border:0;
   border-radius: 14px;
   padding: 12px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 16px;
   cursor:pointer;
   background: linear-gradient(135deg, #1f6feb, #0ea5e9);
   color:#fff;
   box-shadow: var(--shadow);
+}
+
+.btnAlt{
+  width:100%;
+  margin-top: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 14px;
+  padding: 11px;
+  font-weight: 900;
+  font-size: 15px;
+  cursor:pointer;
+  background:#fff;
+}
+
+.btnRow{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+@media (max-width: 520px){
+  .btnRow{ grid-template-columns: 1fr; }
 }
 
 .sep{ height:1px; background: var(--line); margin: 10px 0; }
@@ -156,40 +183,112 @@ input:focus, select:focus{
 }
 
 .pill{
-  display:inline-block;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
   padding: 6px 12px;
   border-radius: 999px;
-  font-weight: 800;
+  font-weight: 900;
   font-size: 12px;
 }
-.ok{ background: rgba(22,163,74,.12); color: var(--ok); }
-.warn{ background: rgba(245,158,11,.14); color: #b45309; }
-.bad{ background: rgba(239,68,68,.12); color: var(--bad); }
+.pill.ok{ background: rgba(22,163,74,.12); color: var(--ok); }
+.pill.warn{ background: rgba(245,158,11,.14); color: #b45309; }
+.pill.bad{ background: rgba(239,68,68,.12); color: var(--bad); }
+
+.legend{
+  display:grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+.legend .item{
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background:#fff;
+}
+.legend .item b{ display:block; margin-bottom: 4px; }
+.legend .item small{ color: var(--muted); }
 
 .vpdBig{
   text-align:center;
-  font-weight: 900;
-  font-size: 40px;
-  margin: 6px 0;
+  font-weight: 1000;
+  font-size: 44px;
+  margin: 10px 0 2px 0;
+  letter-spacing: .2px;
 }
 .vpdBig.ok{ color: var(--ok); }
 .vpdBig.warn{ color: var(--warn); }
 .vpdBig.bad{ color: var(--bad); }
 
+.bigSub{
+  text-align:center;
+  color: var(--muted);
+  font-weight:800;
+  font-size: 13px;
+  margin-bottom: 10px;
+}
+
 ul{ margin: 8px 0 0 18px; padding:0; }
 li{ margin: 6px 0; }
+
+.kv{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 8px;
+}
+.kv .box{
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background:#fff;
+}
+.kv .box .k{ color: var(--muted); font-size: 12px; font-weight:800; }
+.kv .box .v{ font-size: 16px; font-weight:1000; margin-top: 2px; }
+
+.checks{
+  display:grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-top: 10px;
+}
+@media (max-width: 520px){
+  .checks{ grid-template-columns: 1fr; }
+}
+.chk{
+  display:flex; gap:10px; align-items:flex-start;
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background:#fff;
+}
+.chk input{ width:18px; height:18px; margin-top: 2px; }
+.chk div b{ display:block; }
+.chk div small{ color: var(--muted); }
+
+.hist{
+  margin-top: 10px;
+}
+.histItem{
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  padding: 10px 12px;
+  background:#fff;
+  margin-top: 8px;
+}
+.mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
 </style>
 </head>
 
 <body>
 <div class="wrap">
-
   <div class="top">
     <div class="titleRow">
       <div class="badgeIcon">🌱</div>
       <div>
         <h1>Decisor Operacional</h1>
-        <p>Controle climático • VPD + PAR</p>
+        <p>VPD + PAR • com recomendações de lucarna e laterais</p>
       </div>
     </div>
   </div>
@@ -202,37 +301,105 @@ li{ margin: 6px 0; }
 
       <label>Módulo</label>
       <div class="moduleBtns">
-        <button class="mBtn active" data-m="1" onclick="setModulo(1)"> <div class="mTag">M1</div> Pegamento</button>
-        <button class="mBtn" data-m="2" onclick="setModulo(2)"> <div class="mTag">M2</div> Indução</button>
-        <button class="mBtn" data-m="3" onclick="setModulo(3)"> <div class="mTag">M3</div> Endurecimento</button>
+        <button class="mBtn active" data-m="1" onclick="setModulo(1)">
+          <div class="mTag">M1</div> Pegamento
+        </button>
+        <button class="mBtn" data-m="2" onclick="setModulo(2)">
+          <div class="mTag">M2</div> Indução
+        </button>
+        <button class="mBtn" data-m="3" onclick="setModulo(3)">
+          <div class="mTag">M3</div> Endurecimento
+        </button>
       </div>
 
       <div class="row2">
         <div>
           <label>Temperatura (°C)</label>
-          <input id="temp" type="number" step="0.1"/>
+          <input id="temp" type="number" step="0.1" inputmode="decimal" placeholder="ex.: 28.5"/>
         </div>
         <div>
           <label>Umidade (%)</label>
-          <input id="ur" type="number" step="0.1"/>
+          <input id="ur" type="number" step="0.1" inputmode="decimal" placeholder="ex.: 75"/>
         </div>
       </div>
 
       <label>PAR (µmol m⁻² s⁻¹)</label>
-      <input id="par" type="number"/>
+      <input id="par" type="number" step="1" inputmode="numeric" placeholder="ex.: 220"/>
 
-      <label>Programa atual</label>
-      <select id="prog"></select>
+      <label>Programa atual (auto pelo horário)</label>
+      <select id="prog" onchange="renderPrograma(); calcular(false);"></select>
 
       <div class="programBox" id="progInfo" style="margin-top:10px;"></div>
 
-      <button class="btnMain" onclick="calcular()">Calcular</button>
+      <button class="btnMain" onclick="calcular(true)">Calcular</button>
+
+      <div class="checks">
+        <label class="chk">
+          <input type="checkbox" id="act_intervalo"/>
+          <div>
+            <b>Ajustei intervalo</b>
+            <small>segui a recomendação</small>
+          </div>
+        </label>
+
+        <label class="chk">
+          <input type="checkbox" id="act_pulsoextra"/>
+          <div>
+            <b>Pulse extra</b>
+            <small>por T alta</small>
+          </div>
+        </label>
+
+        <label class="chk">
+          <input type="checkbox" id="act_lucarna"/>
+          <div>
+            <b>Ajustei lucarna</b>
+            <small>nível sugerido</small>
+          </div>
+        </label>
+
+        <label class="chk">
+          <input type="checkbox" id="act_laterais"/>
+          <div>
+            <b>Ajustei laterais</b>
+            <small>nível sugerido</small>
+          </div>
+        </label>
+
+        <label class="chk">
+          <input type="checkbox" id="act_sombra_int"/>
+          <div>
+            <b>Sombra interna</b>
+            <small>ajustada</small>
+          </div>
+        </label>
+
+        <label class="chk">
+          <input type="checkbox" id="act_sombra_ext"/>
+          <div>
+            <b>Sombra externa</b>
+            <small>ajustada</small>
+          </div>
+        </label>
+      </div>
+
+      <div class="btnRow">
+        <button class="btnAlt" onclick="registrarAcao()">Registrar ação</button>
+        <button class="btnAlt" onclick="mostrarHistorico()">Histórico (hoje)</button>
+      </div>
+
+      <button class="btnAlt" onclick="exportarCSV()">Exportar CSV</button>
+      <div class="muted" style="margin-top:8px;">
+        Observação: “Registrar ação” salva no aparelho (offline). Você pode exportar em CSV e enviar no WhatsApp/email.
+      </div>
     </div>
 
     <!-- RESULTADO -->
     <div class="card">
       <h2>Resultado</h2>
-      <div id="saida">Preencha os dados.</div>
+      <div id="saida" class="muted">Preencha os dados e toque em <b>Calcular</b>.</div>
+
+      <div id="historico" class="hist" style="display:none;"></div>
     </div>
 
   </div>
@@ -241,20 +408,20 @@ li{ margin: 6px 0; }
 <script>
 // ================= METAS =================
 const metas = {
-  1: { vpdMin:0.3, vpdMax:0.6, parMin:50,  parMax:150 },
-  2: { vpdMin:0.6, vpdMax:0.9, parMin:150, parMax:300 },
-  3: { vpdMin:0.9, vpdMax:1.2, parMin:300, parMax:500 }
+  1: { nome:"M1", vpdMin:0.3, vpdMax:0.6, parMin:50,  parMax:150 },
+  2: { nome:"M2", vpdMin:0.6, vpdMax:0.9, parMin:150, parMax:300 },
+  3: { nome:"M3", vpdMin:0.9, vpdMax:1.2, parMin:300, parMax:500 }
 };
 
 // ============== PROGRAMAS ===============
 const programas = [
-  { id:"P1", horario:"08:00–10:00", objetivo:"Arranque suave", on:5,  int:20 },
-  { id:"P2", horario:"10:00–12:00", objetivo:"Rad subiendo", on:10, int:20 },
-  { id:"P3", horario:"12:00–15:00", objetivo:"Límite térmico", on:10, int:8  },
-  { id:"P4", horario:"15:00–16:00", objetivo:"Límite tardío", on:10, int:10 },
-  { id:"P5", horario:"16:00–17:30", objetivo:"Tarde caliente", on:10, int:20 },
-  { id:"P6", horario:"17:30–19:30", objetivo:"Extensión térmica", on:8,  int:20 },
-  { id:"P7", horario:"19:30–21:00", objetivo:"Ventana sanitaria", on:0,  int:null }
+  { id:"P1", horario:"08:00–10:00", objetivo:"Arranque suave — evitar deshidratación inicial", on:5,  int:20 },
+  { id:"P2", horario:"10:00–12:00", objetivo:"Rad subiendo — estabilidad hídrica",          on:10, int:20 },
+  { id:"P3", horario:"12:00–15:00", objetivo:"Límite térmico — máxima protección hídrica",  on:10, int:8  },
+  { id:"P4", horario:"15:00–16:00", objetivo:"Límite tardío — proteger sin saturar",       on:10, int:10 },
+  { id:"P5", horario:"16:00–17:30", objetivo:"Tarde caliente + sanitario (menos mojado)",  on:10, int:20 },
+  { id:"P6", horario:"17:30–19:30", objetivo:"Extensión térmica — solo control climático", on:8,  int:20 },
+  { id:"P7", horario:"19:30–21:00", objetivo:"Ventana sanitaria",                           on:0,  int:null }
 ];
 
 let modulo = 1;
@@ -269,7 +436,7 @@ function calcVPD(T, RH){
 function min(h){ const [a,b]=h.split(":").map(Number); return a*60+b; }
 function nowMin(){ const d=new Date(); return d.getHours()*60+d.getMinutes(); }
 
-function detectPrograma(){
+function detectProgramaIndex(){
   const t = nowMin();
   if (t>=min("08:00") && t<min("10:00")) return 0;
   if (t>=min("10:00") && t<min("12:00")) return 1;
@@ -282,7 +449,7 @@ function detectPrograma(){
 
 function autoPrograma(){
   const sel = document.getElementById("prog");
-  const idx = detectPrograma();
+  const idx = detectProgramaIndex();
   if (String(sel.value)!==String(idx)){
     sel.value = idx;
     renderPrograma();
@@ -301,6 +468,7 @@ function setModulo(m){
 
 function loadProgramas(){
   const sel = document.getElementById("prog");
+  sel.innerHTML = "";
   programas.forEach((p,i)=>{
     const o = document.createElement("option");
     o.value=i;
@@ -315,56 +483,415 @@ function renderPrograma(){
   const p = programas[idx];
   document.getElementById("progInfo").innerHTML =
     `<b>${p.id} • ${p.horario}</b><br>
-     ${p.objetivo}<div class="sep"></div>
-     Colnet ON: ${p.on}s • Intervalo: ${p.int ?? "—"} min`;
+     ${p.objetivo}
+     <div class="sep"></div>
+     <span class="mono">Colnet ON: ${p.on}s • Intervalo: ${p.int ?? "—"} min</span>`;
+}
+
+// ============ HELPERS ====================
+function clamp(x, lo, hi){ return Math.max(lo, Math.min(hi, x)); }
+
+function pillClass(status){
+  if (status==="ok") return "ok";
+  if (status==="warn") return "warn";
+  return "bad";
+}
+
+function nivelVent(percent){
+  // níveis: 0/25/50/75/100
+  const levels = [0,25,50,75,100];
+  let best = 0, bestDiff = 1e9;
+  for (const L of levels){
+    const d = Math.abs(L - percent);
+    if (d < bestDiff){ bestDiff = d; best = L; }
+  }
+  return best;
+}
+
+function statusVPD(vpd, meta){
+  if (vpd > meta.vpdMax) return "bad";
+  if (vpd < meta.vpdMin) return "warn";
+  return "ok";
+}
+
+function statusPAR(par, meta){
+  if (par > meta.parMax) return "warn";
+  if (par < meta.parMin) return "warn";
+  return "ok";
+}
+
+// Ajuste proporcional do intervalo (mais preciso)
+function novoIntervaloProporcional(intAtual, vpd, meta){
+  const vpdAlvo = (meta.vpdMin + meta.vpdMax) / 2;
+  const erro = (vpd - vpdAlvo) / vpdAlvo; // positivo = seco (VPD alto)
+  // ganho (0.6) e limite de ajuste (±35%)
+  const fator = 1 - clamp(erro * 0.6, -0.35, 0.35);
+  const novo = Math.max(1, Math.round(intAtual * fator));
+  return { novo, fator, vpdAlvo };
+}
+
+// Regras de lucarna e laterais em níveis (operacional)
+function recomendacaoVentilacao(T, vpd, meta, par){
+  // Lucarna responde bem a T alta; laterais podem derrubar UR (aumentar VPD)
+  // heurística simples e prática (pode ajustar depois com seus dados)
+  let luc = 0;
+  let lat = 0;
+
+  const vpdSt = statusVPD(vpd, meta);
+  const parSt = statusPAR(par, meta);
+
+  // Lucarna (zenital): baseado em T
+  if (T >= 32) luc = 75;
+  else if (T >= 30) luc = 50;
+  else if (T >= 28) luc = 25;
+  else luc = 0;
+
+  // Laterais:
+  // - Se VPD muito alto: abrir pouco (não secar mais)
+  // - Se VPD baixo (úmido): abrir mais (janela sanitária)
+  if (vpdSt === "bad"){
+    lat = (T >= 30) ? 25 : 10; // pouco, só alívio
+  } else if (vpdSt === "warn"){
+    lat = 50; // secar/renovar
+  } else {
+    // VPD ok: laterais moderadas se T alta ou PAR alto
+    if (T >= 30 || parSt === "warn") lat = 25;
+    else lat = 0;
+  }
+
+  // Ajuste por PAR alto: sombra é prioridade, mas se o calor estiver preso, ventilação ajuda
+  // aqui só garante que não fica tudo em 0 no meio-dia com PAR alto
+  if (par > meta.parMax && luc === 0 && T >= 28) luc = 25;
+
+  return { luc: nivelVent(luc), lat: nivelVent(lat) };
+}
+
+// Regras de sombra interna/externa (um de cada vez ou ambos)
+function recomendacaoSombra(par, meta){
+  if (par > meta.parMax){
+    return {
+      status:"warn",
+      texto:"PAR acima da meta → ajustar sombra (interna e/ou externa) até voltar ao intervalo do módulo."
+    };
+  }
+  if (par < meta.parMin){
+    return {
+      status:"warn",
+      texto:"PAR abaixo da meta → reduzir sombra com cuidado (sem deixar VPD sair da faixa)."
+    };
+  }
+  return { status:"ok", texto:"PAR dentro da meta." };
 }
 
 // ============ CÁLCULO ====================
+let ultimaRecomendacao = null;
+
 function calcular(strict=true){
-  const T = Number(temp.value);
-  const RH = Number(ur.value);
-  const PAR = Number(par.value);
-  const idx = Number(prog.value||0);
-  const p = programas[idx];
   const out = document.getElementById("saida");
+  const hist = document.getElementById("historico");
+  hist.style.display = "none";
 
-  if (strict && (!T || !RH || RH<=0 || RH>100 || PAR<0)){
-    out.innerHTML = `<span class="pill bad">Dados inválidos</span>`;
-    return;
-  }
-
-  if (!T || !RH || RH<=0 || RH>100 || PAR<0) return;
-
-  const vpd = calcVPD(T,RH);
+  const T = Number(document.getElementById("temp").value);
+  const RH = Number(document.getElementById("ur").value);
+  const PAR = Number(document.getElementById("par").value);
+  const idx = Number(document.getElementById("prog").value||0);
+  const p = programas[idx];
   const meta = metas[modulo];
 
-  let status="ok";
-  if (vpd>meta.vpdMax) status="bad";
-  else if (vpd<meta.vpdMin) status="warn";
-
-  let rec = [];
-  if (p.int){
-    if (vpd>meta.vpdMax){
-      rec.push(`Reduzir intervalo para ~${Math.round(p.int*0.7)} min.`);
-    } else if (vpd<meta.vpdMin){
-      rec.push(`Aumentar intervalo para ~${Math.round(p.int*1.3)} min.`);
-    } else {
-      rec.push("Manter programa.");
+  if (strict){
+    if (!isFinite(T) || !isFinite(RH) || RH<=0 || RH>100){
+      out.innerHTML = `<span class="pill bad">Dados inválidos</span>
+        <div class="muted" style="margin-top:8px;">Preencha Temperatura e Umidade (UR 1–100).</div>`;
+      return;
+    }
+    if (!isFinite(PAR) || PAR < 0){
+      out.innerHTML = `<span class="pill bad">PAR inválido</span>
+        <div class="muted" style="margin-top:8px;">Preencha o PAR (0 ou maior).</div>`;
+      return;
     }
   } else {
-    rec.push("Programa sanitário — evitar molhar.");
+    if (!isFinite(T) || !isFinite(RH) || RH<=0 || RH>100 || !isFinite(PAR) || PAR < 0) return;
   }
 
-  if (PAR>meta.parMax) rec.push("PAR alto → aumentar sombra / laterais.");
-  if (PAR<meta.parMin) rec.push("PAR baixo → reduzir sombra com cuidado.");
-  if (T>30) rec.push("⚠️ T > 30°C → reforçar proteção térmica.");
+  const vpd = calcVPD(T,RH);
+  const vpdSt = statusVPD(vpd, meta);
+  const parSt = statusPAR(PAR, meta);
+  const sombra = recomendacaoSombra(PAR, meta);
+  const vent = recomendacaoVentilacao(T, vpd, meta, PAR);
 
+  // status geral
+  let geral = "ok";
+  if (vpdSt === "bad") geral = "bad";
+  else if (vpdSt === "warn" || parSt === "warn" || T > 30) geral = "warn";
+
+  // recomendação de intervalo (proporcional)
+  let intervaloSug = null;
+  let intervaloTxt = "";
+  if (p.int !== null){
+    const r = novoIntervaloProporcional(p.int, vpd, meta);
+    intervaloSug = r.novo;
+
+    if (vpdSt === "ok"){
+      intervaloTxt = `Manter intervalo: <b>${p.int} min</b>.`;
+      intervaloSug = p.int;
+    } else if (vpdSt === "bad"){
+      intervaloTxt = `VPD alto → reduzir intervalo de <b>${p.int}</b> para <b>${r.novo} min</b>.`;
+    } else {
+      intervaloTxt = `VPD baixo (úmido) → aumentar intervalo de <b>${p.int}</b> para <b>${r.novo} min</b>.`;
+    }
+  } else {
+    intervaloTxt = `Programa sanitário (sem intervalo): priorizar evitar “dormir molhado” e focar ventilação/limpeza.`;
+  }
+
+  // legendas “bonitas”
+  const legendaVPD = (vpdSt==="ok")
+    ? `VPD dentro da meta do ${meta.nome} (${meta.vpdMin}–${meta.vpdMax} kPa).`
+    : (vpdSt==="bad")
+      ? `VPD acima da meta do ${meta.nome} (${meta.vpdMin}–${meta.vpdMax}).`
+      : `VPD abaixo da meta do ${meta.nome} (${meta.vpdMin}–${meta.vpdMax}).`;
+
+  const legendaPAR = (PAR>=meta.parMin && PAR<=meta.parMax)
+    ? `PAR dentro da meta do ${meta.nome} (${meta.parMin}–${meta.parMax}).`
+    : `PAR fora da meta do ${meta.nome} (${meta.parMin}–${meta.parMax}).`;
+
+  const legendaT = (T>30)
+    ? `Temperatura alta (>30°C): reforçar proteção térmica.`
+    : `Temperatura ok.`;
+
+  // recomendações operacionais (lista)
+  const rec = [];
+  rec.push(`<b>Programa atual:</b> ${p.id} (${p.horario}) • <span class="mono">ON ${p.on}s / Intervalo ${p.int ?? "—"} min</span>`);
+  rec.push(`<b>Irrigação:</b> ${intervaloTxt}`);
+
+  // vent
+  rec.push(`<b>Ventilação:</b> Lucarna (zenital) <b>${vent.luc}%</b> • Laterais <b>${vent.lat}%</b> (em etapas).`);
+
+  // sombra
+  rec.push(`<b>Luz (PAR):</b> ${sombra.texto}`);
+  if (PAR > meta.parMax){
+    rec.push(`Sugestão prática: reduzir PAR usando <b>sombra interna</b> primeiro; se ainda estiver alto, ajustar <b>sombra externa</b>. (Pode usar ambos até chegar na faixa).`);
+  } else if (PAR < meta.parMin){
+    rec.push(`Sugestão prática: abrir sombra externa primeiro; depois ajustar a interna, sempre observando VPD.`);
+  }
+
+  // temperatura
+  if (T > 30){
+    rec.push(`⚠️ <b>T > 30°C</b>: abrir lucarna em etapas e usar laterais com cuidado (evitar secar demais). Se necessário, <b>pulso extra curto</b> no período crítico.`);
+  }
+
+  // render
   out.innerHTML = `
-    <div class="pill ${status}">${status.toUpperCase()}</div>
-    <div class="vpdBig ${status}">${vpd.toFixed(2)} kPa</div>
+    <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+      <span class="pill ${pillClass(geral)}">${geral === "ok" ? "OK" : (geral === "warn" ? "ATENÇÃO" : "CRÍTICO")}</span>
+      <span class="pill ${pillClass(vpdSt)}">${meta.nome}</span>
+    </div>
+
+    <div class="vpdBig ${pillClass(vpdSt)}">${vpd.toFixed(2)} kPa</div>
+    <div class="bigSub">VPD calculado • T=${T.toFixed(1)}°C • UR=${RH.toFixed(1)}% • PAR=${Math.round(PAR)} µmol m⁻² s⁻¹</div>
+
+    <div class="kv">
+      <div class="box">
+        <div class="k">Intervalo sugerido</div>
+        <div class="v">${(intervaloSug !== null) ? (intervaloSug + " min") : "—"}</div>
+      </div>
+      <div class="box">
+        <div class="k">Ventilação (níveis)</div>
+        <div class="v">Lucarna ${vent.luc}% • Laterais ${vent.lat}%</div>
+      </div>
+    </div>
+
+    <div class="legend">
+      <div class="item">
+        <b>${legendaVPD}</b>
+        <small>Controle principal: VPD (meta do módulo).</small>
+      </div>
+      <div class="item">
+        <b>${legendaPAR}</b>
+        <small>Luz ajustada por sombra interna/externa e laterais.</small>
+      </div>
+      <div class="item">
+        <b>${legendaT}</b>
+        <small>Lucarna é a primeira escolha para aliviar calor.</small>
+      </div>
+    </div>
+
+    <div class="sep"></div>
     <div><b>Recomendações</b></div>
     <ul>${rec.map(r=>`<li>${r}</li>`).join("")}</ul>
   `;
+
+  // salvar para o "Registrar ação"
+  ultimaRecomendacao = {
+    ts: new Date().toISOString(),
+    modulo: meta.nome,
+    programa: p.id,
+    horarioProg: p.horario,
+    T, RH, PAR,
+    VPD: Number(vpd.toFixed(2)),
+    colnet_on_s: p.on,
+    intervalo_atual_min: p.int,
+    intervalo_sugerido_min: intervaloSug,
+    lucarna_sug_pct: vent.luc,
+    laterais_sug_pct: vent.lat,
+    rec_texto: rec.join(" | ")
+  };
+}
+
+// ============ REGISTRAR / HISTÓRICO / CSV ============
+const STORAGE_KEY = "decisor_vpd_logs_v1";
+
+function getLogs(){
+  try{
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "[]");
+  } catch(e){
+    return [];
+  }
+}
+function setLogs(arr){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+}
+
+function todayKeyISO(){
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth()+1).padStart(2,"0");
+  const day = String(d.getDate()).padStart(2,"0");
+  return `${y}-${m}-${day}`;
+}
+
+function registrarAcao(){
+  if (!ultimaRecomendacao){
+    alert("Primeiro toque em CALCULAR para gerar uma recomendação.");
+    return;
+  }
+
+  const acoes = {
+    ajustei_intervalo: document.getElementById("act_intervalo").checked,
+    pulso_extra: document.getElementById("act_pulsoextra").checked,
+    ajustei_lucarna: document.getElementById("act_lucarna").checked,
+    ajustei_laterais: document.getElementById("act_laterais").checked,
+    sombra_interna: document.getElementById("act_sombra_int").checked,
+    sombra_externa: document.getElementById("act_sombra_ext").checked
+  };
+
+  const entry = {
+    ...ultimaRecomendacao,
+    dia: todayKeyISO(),
+    acoes
+  };
+
+  const logs = getLogs();
+  logs.push(entry);
+  setLogs(logs);
+
+  // reset checks (opcional)
+  Object.keys(acoes).forEach(k=>{
+    const idMap = {
+      ajustei_intervalo:"act_intervalo",
+      pulso_extra:"act_pulsoextra",
+      ajustei_lucarna:"act_lucarna",
+      ajustei_laterais:"act_laterais",
+      sombra_interna:"act_sombra_int",
+      sombra_externa:"act_sombra_ext"
+    };
+    document.getElementById(idMap[k]).checked = false;
+  });
+
+  alert("Ação registrada (offline).");
+}
+
+function mostrarHistorico(){
+  const hist = document.getElementById("historico");
+  const out = document.getElementById("saida");
+
+  const logs = getLogs().filter(x => x.dia === todayKeyISO());
+  hist.style.display = "block";
+
+  if (logs.length === 0){
+    hist.innerHTML = `<div class="muted">Sem registros hoje.</div>`;
+    return;
+  }
+
+  const items = logs.slice().reverse().map(x=>{
+    const dt = new Date(x.ts);
+    const hh = String(dt.getHours()).padStart(2,"0");
+    const mm = String(dt.getMinutes()).padStart(2,"0");
+    const acts = [];
+    if (x.acoes?.ajustei_intervalo) acts.push("intervalo");
+    if (x.acoes?.pulso_extra) acts.push("pulso extra");
+    if (x.acoes?.ajustei_lucarna) acts.push("lucarna");
+    if (x.acoes?.ajustei_laterais) acts.push("laterais");
+    if (x.acoes?.sombra_interna) acts.push("sombra int.");
+    if (x.acoes?.sombra_externa) acts.push("sombra ext.");
+
+    return `
+      <div class="histItem">
+        <b>${hh}:${mm}</b> • ${x.modulo} • ${x.programa}
+        <div class="muted mono" style="margin-top:6px;">
+          T=${x.T.toFixed(1)} • UR=${x.RH.toFixed(1)} • VPD=${x.VPD.toFixed(2)} • PAR=${Math.round(x.PAR)}
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          Sugestão: intervalo ${x.intervalo_sugerido_min ?? "—"} min • lucarna ${x.lucarna_sug_pct}% • laterais ${x.laterais_sug_pct}%
+        </div>
+        <div class="muted" style="margin-top:6px;">
+          Ações: <b>${acts.length ? acts.join(", ") : "—"}</b>
+        </div>
+      </div>
+    `;
+  }).join("");
+
+  hist.innerHTML = `
+    <div class="sep"></div>
+    <h2 style="margin:0 0 6px 0; font-size:14px;">Histórico (hoje)</h2>
+    ${items}
+  `;
+
+  // rola pra baixo no resultado (opcional)
+  out.scrollIntoView({behavior:"smooth", block:"start"});
+}
+
+function exportarCSV(){
+  const logs = getLogs();
+  if (!logs.length){
+    alert("Sem registros para exportar.");
+    return;
+  }
+
+  const cols = [
+    "dia","ts","modulo","programa","horarioProg",
+    "T","RH","VPD","PAR",
+    "colnet_on_s","intervalo_atual_min","intervalo_sugerido_min",
+    "lucarna_sug_pct","laterais_sug_pct",
+    "acao_ajustei_intervalo","acao_pulso_extra","acao_ajustei_lucarna","acao_ajustei_laterais","acao_sombra_interna","acao_sombra_externa"
+  ];
+
+  const esc = (v) => {
+    const s = (v===null || v===undefined) ? "" : String(v);
+    if (s.includes('"') || s.includes(",") || s.includes("\n")) return `"${s.replaceAll('"','""')}"`;
+    return s;
+  };
+
+  const rows = [cols.join(",")].concat(
+    logs.map(x=>{
+      return cols.map(c=>{
+        if (c.startsWith("acao_")){
+          const k = c.replace("acao_","");
+          return esc(!!x.acoes?.[k]);
+        }
+        return esc(x[c]);
+      }).join(",");
+    })
+  ).join("\n");
+
+  const blob = new Blob([rows], {type:"text/csv;charset=utf-8"});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `decisor_vpd_logs_${todayKeyISO()}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 
 // ============ INIT =======================
