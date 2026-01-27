@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Decisor VPD - Enraizamento</title>
+  <style>
+    body { font-family: system-ui, Arial, sans-serif; margin: 16px; max-width: 680px; }
+    .card { border: 1px solid #ddd; border-radius: 12px; padding: 14px; margin: 12px 0; }
+    label { display:block; margin: 10px 0 6px; font-weight: 600; }
+    input, select { width: 100%; padding: 10px; border-radius: 10px; border: 1px solid #ccc; font-size: 16px; }
+    button { width: 100%; padding: 12px; border: 0; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; }
+    .ok { background: #e9f7ef; }
+    .warn { background: #fff6e6; }
+    .bad { background: #fdecea; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    small { color: #555; }
+  </style>
+</head>
+<body>
+  <h2>Decisor de Manejo (VPD) – Miniestacas</h2>
+  <p><small>Baseado no manejo com COLNET (7,5 L/h; 6 linhas; 1 m entre aspersores). Insira T e UR para calcular VPD e receber a recomendação.</small></p>
+
+  <div class="card">
+    <label>Fase</label>
+    <select id="fase">
+      <option value="1">Fase 1 (D0–D7) – Pegamento</option>
+      <option value="2">Fase 2 (D8–D21) – Indução de raízes</option>
+      <option value="3">Fase 3 (D22–D35) – Endurecimento</option>
+    </select>
+
+    <label>Temperatura (°C)</label>
+    <input id="temp" type="number" step="0.1" placeholder="ex.: 28.5" />
+
+    <label>Umidade Relativa (%)</label>
+    <input id="ur" type="number" step="0.1" placeholder="ex.: 75" />
+
+    <label>Horário atual (para sugerir bloco)</label>
+    <select id="bloco">
+      <option value="manha">08:00–11:30</option>
+      <option value="pico">11:30–16:30 (pico)</option>
+      <option value="tarde">16:30–19:00</option>
+      <option value="noite">19:00–08:00</option>
+    </select>
+
+    <div style="margin-top: 12px;">
+      <button onclick="calcular()">Calcular VPD e recomendar</button>
+    </div>
+  </div>
+
+  <div id="saida" class="card" style="display:none;"></div>
+
+<script>
+  // VPD (kPa): es(T) * (1 - RH/100), where es(T)=0.6108*exp((17.27*T)/(T+237.3))
+  function vpd_kpa(T, RH){
+    const es = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
+    return es * (1 - RH/100);
+  }
+
+  // Programas base (segundos e intervalos em minutos) por fase e bloco
+  const programas = {
+    1: { // Fase 1
+      manha: {dur_s: 20, int_min: 6},
+      pico:  {dur_s: 25, int_min: 4},
+      tarde: {dur_s: 15, int_min: 10},
+      noite: {dur_s: 0,  int_min: null}
+    },
+    2: { // Fase 2
+      manha: {dur_s: 20, int_min: 10},
+      pico:  {dur_s: 25, int_min: 7},
+      tarde: {dur_s: 15, int_min: 18},
+      noite: {dur_s: 0,  int_min: null}
+    },
+    3: { // Fase 3
+      manha: {dur_s: 15, int_min: 20},
+      pico:  {dur_s: 20, int_min: 12},
+      tarde: {dur_s: 10, int_min: 30},
+      noite: {dur_s: 0,  int_min: null}
+    }
+  };
+
+  // Metas de VPD por fase (kPa)
+  const metas = {
+    1: {min: 0.3, max: 0.6},
+    2: {min: 0.6, max: 0.9},
+    3: {min: 0.9, max: 1.2}
+  };
+
+  // Overrides definidos (redução de intervalos quando VPD alto)
+  const overridesAlta = {
+    1: {manha: 4, pico: 3, tarde: 7},
+    2: {manha: 7, pico: 5, tarde: 12},
+    3: {manha: 14, pico: 8, tarde: 20}
+  };
+
+  // Quando VPD baixo por muito tempo (úmido demais) – sugerir intervalos maiores
+  const overridesBaixa = {
+    1: {manha: 8, pico: 6, tarde: 14},
+    2: {manha: 14, pico: 10, tarde: 25},
+    3: {manha: 26, pico: 16, tarde: 40}
+  };
+
+  function fmt(n, d=2){ return Number(n).toFixed(d); }
+
+  function calcular(){
+    const fase = Number(document.getElementById("fase").value);
+    const T = Number(document.getElementById("temp").value);
+    const RH = Number(document.getElementById("ur").value);
+    const bloco = document.getElementById("bloco").value;
+
+    const out = document.getElementById("saida");
+    out.style.display = "block";
+
+    if (!isFinite(T) || !isFinite(RH) || RH <= 0 || RH > 100){
+      out.className = "card bad";
+      out.innerHTML = "<b>Dados inválidos.</b><br>Preencha Temperatura e UR (UR entre 1 e 100).";
+      return;
+    }
+
+    const vpd = vpd_kpa(T, RH);
+    const meta = metas[fase];
+    const prog = programas[fase][bloco];
+
+    let status = "ok";
+    let recomend = [];
+    let programaStr = "";
+
+    if (prog.dur_s === 0){
+      programaStr = "Noite: programa base = <b>desligado</b> (evitar ‘dormir molhado’).";
+    } else {
+      programaStr = `Programa base: <b>${prog.dur_s}s a cada ${prog.int_min} min</b>.`;
+    }
+
+    // Regras de decisão
+    if (vpd > meta.max){
+      status = "bad";
+      recomend.push(`VPD acima da meta da fase (meta: ${meta.min}–${meta.max} kPa).`);
+      if (bloco !== "noite"){
+        const novoInt = overridesAlta[fase][bloco];
+        recomend.push(`Ação: <b>reduzir intervalo</b> para <b>${novoInt} min</b> (mantendo a duração do pulso).`);
+      } else {
+        recomend.push("Ação: evitar irrigar à noite; se estiver secando muito, usar pulsos bem espaçados e monitorar fungo.");
+      }
+    } else if (vpd < meta.min){
+      status = "warn";
+      recomend.push(`VPD abaixo da meta (ambiente muito úmido).`);
+      if (bloco !== "noite"){
+        const novoInt = overridesBaixa[fase][bloco];
+        recomend.push(`Ação: <b>aumentar intervalo</b> para <b>${novoInt} min</b> e melhorar ventilação breve no fim da tarde.`);
+      } else {
+        recomend.push("Ação: manter desligado; priorizar renovação de ar mínima para reduzir risco de fungo.");
+      }
+    } else {
+      status = "ok";
+      recomend.push("VPD dentro da meta da fase.");
+      recomend.push("Ação: manter programa base.");
+    }
+
+    // Regra de temperatura
+    if (T > 30){
+      recomend.push(`⚠️ <b>T > 30°C</b>: reforçar sombra/laterais em etapas e considerar <b>1 pulso extra</b> no pico enquanto durar o superaquecimento.`);
+    }
+
+    out.className = `card ${status === "ok" ? "ok" : (status === "warn" ? "warn" : "bad")}`;
+    out.innerHTML = `
+      <div><b>Resultado</b></div>
+      <div class="mono">T=${fmt(T,1)}°C | UR=${fmt(RH,1)}% | VPD=${fmt(vpd,2)} kPa</div>
+      <div style="margin-top:8px;">${programaStr}</div>
+      <ul>${recomend.map(x => `<li>${x}</li>`).join("")}</ul>
+      <small>Dica: ajuste fino normalmente só no bloco <b>11:30–16:30</b>.</small>
+    `;
+  }
+</script>
+</body>
+</html>
