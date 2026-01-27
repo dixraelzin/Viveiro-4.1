@@ -24,7 +24,6 @@
     .card p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.35}
     .grow{flex:1 1 380px}
     .half{flex:1 1 320px}
-    .third{flex:1 1 260px}
     .btn{background:var(--btn);border:1px solid var(--line);color:var(--text);
       border-radius:14px;padding:10px 12px;cursor:pointer;font-weight:650}
     .btn:hover{filter:brightness(1.08)}
@@ -103,7 +102,7 @@
       <p><b>VPD</b> (kPa) se calcula con Temperatura y Humedad Relativa. PAR se usa para recomendar el uso de malla blanca.</p>
       <div class="hr"></div>
       <p class="muted">
-        Sin nebulización: el orden correcto es <b>ventilación</b> (cenital/laterales) → <b>sombreo</b> (malla) → agua en piso solo emergencia.
+        Sin nebulización: orden recomendado <b>ventilación</b> → <b>sombreo</b> → agua en piso solo emergencia.
       </p>
     </div>
   </div>
@@ -117,7 +116,7 @@
       <ul class="muted">
         <li>Prohibido mojar el techo/plástico para “bajar temperatura”.</li>
         <li>Prohibido dejar charcos en el piso/pasillos.</li>
-        <li>En días calurosos, no se permite “cortinas abiertas con cenital cerrada”. Prioridad: intercambio de aire (cenital + laterales).</li>
+        <li>En días calurosos: prioridad intercambio de aire (cenital + laterales).</li>
       </ul>
       <p><b>Uso de agua en piso (solo emergencia)</b></p>
       <ul class="muted">
@@ -158,28 +157,16 @@
           <small>VPD (kPa)</small>
           <div class="big" id="minVPD">—</div>
         </div>
-        <div>
-          <div id="minBadge" class="badge ok">—</div>
-        </div>
+        <div><div id="minBadge" class="badge ok">—</div></div>
       </div>
+
       <div class="hr"></div>
+
       <div class="rec">
-        <div class="recItem">
-          <div class="name">Ventana cenital</div>
-          <div class="value" id="minCen">—</div>
-        </div>
-        <div class="recItem">
-          <div class="name">Ventanas laterales</div>
-          <div class="value" id="minLat">—</div>
-        </div>
-        <div class="recItem">
-          <div class="name">Malla blanca (por PAR)</div>
-          <div class="value" id="minMalla">—</div>
-        </div>
-        <div class="recItem">
-          <div class="name">Agua en piso</div>
-          <div class="value" id="minPiso">—</div>
-        </div>
+        <div class="recItem"><div class="name">Ventana cenital</div><div class="value" id="minCen">—</div></div>
+        <div class="recItem"><div class="name">Ventanas laterales</div><div class="value" id="minLat">—</div></div>
+        <div class="recItem"><div class="name">Malla blanca (por PAR)</div><div class="value" id="minMalla">—</div></div>
+        <div class="recItem"><div class="name">Agua en piso</div><div class="value" id="minPiso">—</div></div>
       </div>
 
       <div class="hr"></div>
@@ -204,7 +191,7 @@
   <div id="screenInv" class="row hide">
     <div class="card half">
       <h3>Invernadero — Datos (Base)</h3>
-      <p class="muted">Este módulo es un “contenedor” para pegar tu lógica anterior del invernadero sin romper el app.</p>
+      <p class="muted">Contenedor para pegar tu lógica real del invernadero.</p>
       <label>Fase</label>
       <select id="invPhase">
         <option value="M1">M1</option>
@@ -237,18 +224,10 @@
       </div>
       <div class="hr"></div>
       <div class="rec">
-        <div class="recItem">
-          <div class="name">Recomendación general</div>
-          <div class="value" id="invRec">—</div>
-        </div>
-        <div class="recItem">
-          <div class="name">Nota</div>
-          <div class="value" id="invNote">—</div>
-        </div>
+        <div class="recItem"><div class="name">Recomendación general</div><div class="value" id="invRec">—</div></div>
+        <div class="recItem"><div class="name">Nota</div><div class="value" id="invNote">—</div></div>
       </div>
-      <p class="muted" style="margin-top:10px">
-        Cuando pegues tu lógica anterior, sustituimos “Recomendación general” por tus pulsos/acciones reales.
-      </p>
+      <p class="muted" style="margin-top:10px">Luego reemplazamos esto por tu lógica de pulsos/acciones.</p>
     </div>
   </div>
 
@@ -256,7 +235,7 @@
   <div id="screenHist" class="row hide">
     <div class="card grow">
       <h3>Historial</h3>
-      <p class="muted">Guardado localmente en este navegador. Exporta a CSV para analizar en Excel.</p>
+      <p class="muted">Guardado localmente en este navegador. Exporta a CSV para Excel.</p>
       <div class="hr"></div>
       <div class="row" style="justify-content:space-between;align-items:center">
         <div class="row">
@@ -265,20 +244,14 @@
         </div>
         <div class="pill" id="histCount">0 registros</div>
       </div>
+
       <div class="hr"></div>
       <div style="overflow:auto">
         <table>
           <thead>
-            <tr>
-              <th>Fecha/Hora</th>
-              <th>Sector</th>
-              <th>Fase</th>
-              <th>T (°C)</th>
-              <th>HR (%)</th>
-              <th>PAR</th>
-              <th>VPD (kPa)</th>
-              <th>Acción/Nota</th>
-            </tr>
+          <tr>
+            <th>Fecha/Hora</th><th>Sector</th><th>Fase</th><th>T (°C)</th><th>HR (%)</th><th>PAR</th><th>VPD (kPa)</th><th>Acción/Nota</th>
+          </tr>
           </thead>
           <tbody id="histBody"></tbody>
         </table>
@@ -288,7 +261,6 @@
 </div>
 
 <script>
-  // ---------- Utilidades ----------
   const $ = (id) => document.getElementById(id);
 
   function nowISO(){
@@ -298,11 +270,8 @@
   }
 
   function calcVPD(T, RH){
-    // SVP = 0.6108 * exp( (17.27*T)/(T+237.3) )
-    // VPD = SVP*(1 - RH/100)
     const svp = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
-    const vpd = svp * (1 - (RH/100));
-    return vpd; // kPa
+    return svp * (1 - (RH/100));
   }
 
   function vpdBand(vpd){
@@ -321,79 +290,47 @@
 
   function minRecomendacion(vpd, par){
     const band = vpdBand(vpd);
-    let cen = "—", lat = "—", piso = "Prohibido", showPulse = false;
+    let cen="—", lat="—", piso="Prohibido", showPulse=false;
 
-    if (vpd <= 0.6){
-      cen = "20–40%";
-      lat = "30–60%";
-      piso = "Prohibido";
-    } else if (vpd <= 1.2){
-      cen = "30–60%";
-      lat = "40–70%";
-      piso = "Prohibido";
-    } else if (vpd <= 1.6){
-      cen = "70–100%";
-      lat = "70–100%";
-      piso = "Prohibido";
-    } else {
-      cen = "100%";
-      lat = "100%";
-      piso = "Solo emergencia (timer)";
-      showPulse = true;
-    }
+    if (vpd <= 0.6){ cen="20–40%"; lat="30–60%"; }
+    else if (vpd <= 1.2){ cen="30–60%"; lat="40–70%"; }
+    else if (vpd <= 1.6){ cen="70–100%"; lat="70–100%"; }
+    else { cen="100%"; lat="100%"; piso="Solo emergencia (timer)"; showPulse=true; }
 
     const m = mallaByPAR(par);
 
-    let note = "";
-    if (band.key === "Húmedo"){
-      note = "Riesgo sanitario: aumentar intercambio de aire para evitar ambiente pesado.";
-    } else if (band.key === "Óptimo"){
-      note = "Mantener estabilidad. Prioridad: ventilación + malla blanca según PAR.";
-    } else if (band.key === "Atención"){
-      note = "Estrés en aumento: ventilación alta. Evitar usar agua como control térmico.";
-    } else {
-      note = "Crítico: ventilación máxima + malla. Agua en piso solo como pulso controlado, sin charcos.";
-    }
+    let note="";
+    if (band.key === "Húmedo") note = "Riesgo sanitario: aumentar intercambio de aire para evitar ambiente pesado.";
+    else if (band.key === "Óptimo") note = "Mantener estabilidad. Prioridad: ventilación + malla blanca según PAR.";
+    else if (band.key === "Atención") note = "Estrés en aumento: ventilación alta. Evitar usar agua como control térmico.";
+    else note = "Crítico: ventilación máxima + malla. Agua en piso solo pulso controlado, sin charcos.";
 
-    return {band, cen, lat, malla:m.txt, piso, note: note + " " + m.note, showPulse};
+    return {band, cen, lat, malla:m.txt, piso, note: `${note} ${m.note}`, showPulse};
   }
 
   function invRecomendacionBase(phase, vpd, par){
-    // Placeholder para que el app funcione mientras pegamos tu lógica real
     const band = vpdBand(vpd);
     const m = mallaByPAR(par);
 
     let rec = "Ajustar ventilación y sombreo.";
     let note = `Fase ${phase}. ${m.note}`;
 
-    if (band.key === "Húmedo"){
-      rec = "Incrementar ventilación (evitar exceso de humedad).";
-      note = `Riesgo sanitario en ${phase}. Evitar hoja mojada prolongada.`;
-    } else if (band.key === "Óptimo"){
-      rec = "Mantener setpoints y rutina estable.";
-      note = `Buen rango para ${phase}.`;
-    } else if (band.key === "Atención"){
-      rec = "Aumentar ventilación / revisar pulsos y sombra.";
-      note = `VPD subiendo en ${phase}.`;
-    } else {
-      rec = "Modo crítico: ventilación máxima, revisar manejo hídrico del cultivo.";
-      note = `VPD crítico en ${phase}.`;
-    }
+    if (band.key === "Húmedo"){ rec="Incrementar ventilación (evitar exceso de humedad)."; note=`Riesgo sanitario en ${phase}.`; }
+    else if (band.key === "Óptimo"){ rec="Mantener setpoints y rutina estable."; note=`Buen rango para ${phase}.`; }
+    else if (band.key === "Atención"){ rec="Aumentar ventilación / revisar pulsos y sombra."; note=`VPD subiendo en ${phase}.`; }
+    else { rec="Modo crítico: ventilación máxima, revisar manejo hídrico."; note=`VPD crítico en ${phase}.`; }
 
     return {band, rec, note};
   }
 
-  // ---------- Historial (LocalStorage) ----------
+  // ====== Historial
   const KEY = "app_vivero_hist_v1";
 
   function loadHist(){
     try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
     catch(e){ return []; }
   }
-  function saveHist(arr){
-    localStorage.setItem(KEY, JSON.stringify(arr));
-  }
-
+  function saveHist(arr){ localStorage.setItem(KEY, JSON.stringify(arr)); }
   function addRecord(rec){
     const arr = loadHist();
     arr.unshift(rec);
@@ -422,13 +359,19 @@
     });
   }
 
+  function csvEscape(v){
+    const s = String(v ?? "");
+    const esc = s.replaceAll('"','""').replaceAll("\n"," ").replaceAll("\r"," ");
+    return `"${esc}"`;
+  }
+
   function exportToCSV(){
     const arr = loadHist();
     const headers = ["FechaHora","Sector","Fase","T_C","HR_pct","PAR","VPD_kPa","AccionNota"];
     const rows = arr.map(r=>[
-      r.ts, r.sector, r.phase||"", r.T??"", r.RH??"", r.PAR??"", r.VPD??"", (r.note||"").replaceAll("\n"," ").replaceAll('"','""')
+      r.ts, r.sector, r.phase||"", r.T??"", r.RH??"", r.PAR??"", r.VPD??"", r.note||""
     ]);
-    const csv = [headers.join(","), ...rows.map(row => row.map(v => `"${v}"`).join(","))].join("\n");
+    const csv = [headers.map(csvEscape).join(","), ...rows.map(row => row.map(csvEscape).join(","))].join("\n");
 
     const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
     const url = URL.createObjectURL(blob);
@@ -441,7 +384,7 @@
     URL.revokeObjectURL(url);
   }
 
-  // ---------- Navegación ----------
+  // ====== Navegación
   function show(screenId){
     ["screenHome","screenMin","screenInv","screenHist","screenSOP"].forEach(id=>{
       $(id).classList.toggle("hide", id !== screenId);
@@ -449,10 +392,30 @@
     if (screenId === "screenHist") renderHist();
   }
 
-  // ---------- Timer pulso piso ----------
+  // ====== Timer pulso (persistente)
+  const PULSE_KEY = "app_vivero_pulse_state_v1";
   let pulseLockUntil = 0;
   let pulseOnUntil = 0;
   let pulseInterval = null;
+
+  function loadPulse(){
+    try{
+      const s = JSON.parse(localStorage.getItem(PULSE_KEY) || "{}");
+      pulseLockUntil = Number(s.pulseLockUntil || 0);
+      pulseOnUntil = Number(s.pulseOnUntil || 0);
+    } catch(e){}
+  }
+  function savePulse(){
+    localStorage.setItem(PULSE_KEY, JSON.stringify({pulseLockUntil, pulseOnUntil}));
+  }
+
+  function stopPulseTickerIfIdle(){
+    const now = Date.now();
+    if (now >= pulseOnUntil && now >= pulseLockUntil && pulseInterval){
+      clearInterval(pulseInterval);
+      pulseInterval = null;
+    }
+  }
 
   function updatePulseUI(){
     const now = Date.now();
@@ -467,21 +430,20 @@
     } else {
       status.textContent = "Listo. Si hay charcos, NO repetir (corregir drenaje/caudal).";
     }
+    stopPulseTickerIfIdle();
   }
 
   function startPulse(){
     const now = Date.now();
-    if (now < pulseLockUntil){
-      updatePulseUI();
-      return;
-    }
+    if (now < pulseLockUntil){ updatePulseUI(); return; }
+
     pulseOnUntil = now + 2*60*1000;
-    pulseLockUntil = now + 22*60*1000; // 2 min ON + 20 min OFF
+    pulseLockUntil = now + 22*60*1000;
+    savePulse();
+
     updatePulseUI();
-    if (!pulseInterval){
-      pulseInterval = setInterval(updatePulseUI, 500);
-    }
-    // Registrar automáticamente el inicio del pulso como evento
+    if (!pulseInterval) pulseInterval = setInterval(updatePulseUI, 500);
+
     addRecord({
       ts: nowISO(),
       sector: "Minijardín",
@@ -494,65 +456,56 @@
     });
   }
 
-  // ---------- Eventos UI ----------
+  // ====== Eventos UI
   function tickClock(){
     const d = new Date();
     $("nowPill").textContent = d.toLocaleString("es-CL", {weekday:"short", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
   }
-  setInterval(tickClock, 1000);
-  tickClock();
+  setInterval(tickClock, 1000); tickClock();
 
   $("btnHome").onclick = ()=>show("screenHome");
   $("btnHist").onclick = ()=>show("screenHist");
-
   $("goMin").onclick = ()=>show("screenMin");
   $("goInv").onclick = ()=>show("screenInv");
   $("goSOP").onclick = ()=>show("screenSOP");
   $("backFromSOP").onclick = ()=>show("screenHome");
 
-  // Minijardín calcular
   $("minCalc").onclick = ()=>{
     const T = parseFloat($("minT").value);
     const RH = parseFloat($("minRH").value);
     const PAR = parseFloat($("minPAR").value);
-
     if (Number.isNaN(T) || Number.isNaN(RH) || Number.isNaN(PAR)){
       $("minNote").textContent = "Completa Temperatura, Humedad y PAR.";
       return;
     }
 
     const vpd = calcVPD(T, RH);
-    const vpdTxt = vpd.toFixed(2);
-    $("minVPD").textContent = vpdTxt;
+    $("minVPD").textContent = vpd.toFixed(2);
 
     const r = minRecomendacion(vpd, PAR);
     $("minBadge").className = `badge ${r.band.cls}`;
     $("minBadge").textContent = r.band.key;
-
     $("minCen").textContent = r.cen;
     $("minLat").textContent = r.lat;
     $("minMalla").textContent = r.malla;
     $("minPiso").textContent = r.piso;
-
     $("minNote").textContent = r.note;
 
     $("timerSection").classList.toggle("hide", !r.showPulse);
     if (r.showPulse){
       updatePulseUI();
-      if (!pulseInterval){
-        pulseInterval = setInterval(updatePulseUI, 500);
-      }
+      if (!pulseInterval) pulseInterval = setInterval(updatePulseUI, 500);
     }
   };
 
   $("startPulse").onclick = startPulse;
 
-  // Minijardín registrar
   $("minSave").onclick = ()=>{
-    const recNote =
-      `Acción registrada. Cenital: ${$("minCen").textContent}, Laterales: ${$("minLat").textContent}, ` +
-      `Malla: ${$("minMalla").textContent}, Piso: ${$("minPiso").textContent}. ` +
-      `Obs: ${($("minObs").value || "").trim()}`;
+    const obs = ($("minObs").value || "").trim();
+    const note =
+      `Cenital: ${$("minCen").textContent}; Laterales: ${$("minLat").textContent}; ` +
+      `Malla: ${$("minMalla").textContent}; Piso: ${$("minPiso").textContent}. ` +
+      (obs ? `Obs: ${obs}` : "");
     addRecord({
       ts: nowISO(),
       sector: "Minijardín",
@@ -561,40 +514,35 @@
       RH: $("minRH").value || "",
       PAR: $("minPAR").value || "",
       VPD: $("minVPD").textContent || "",
-      note: recNote
+      note
     });
     $("minObs").value = "";
     alert("Acción registrada en el historial.");
   };
 
-  // Invernadero calcular (base)
   $("invCalc").onclick = ()=>{
     const phase = $("invPhase").value;
     const T = parseFloat($("invT").value);
     const RH = parseFloat($("invRH").value);
     const PAR = parseFloat($("invPAR").value);
-
     if (Number.isNaN(T) || Number.isNaN(RH) || Number.isNaN(PAR)){
       $("invRec").textContent = "Completa Temperatura, Humedad y PAR.";
       $("invNote").textContent = "—";
       return;
     }
-
     const vpd = calcVPD(T, RH);
     $("invVPD").textContent = vpd.toFixed(2);
 
     const r = invRecomendacionBase(phase, vpd, PAR);
     $("invBadge").className = `badge ${r.band.cls}`;
     $("invBadge").textContent = r.band.key;
-
     $("invRec").textContent = r.rec;
     $("invNote").textContent = r.note;
   };
 
-  // Invernadero registrar (base)
   $("invSave").onclick = ()=>{
-    const recNote =
-      `Fase ${$("invPhase").value}. Rec: ${$("invRec").textContent}. Obs: ${($("invObs").value || "").trim()}`;
+    const obs = ($("invObs").value || "").trim();
+    const note = `Fase ${$("invPhase").value}. Rec: ${$("invRec").textContent}. ` + (obs ? `Obs: ${obs}` : "");
     addRecord({
       ts: nowISO(),
       sector: "Invernadero",
@@ -603,13 +551,12 @@
       RH: $("invRH").value || "",
       PAR: $("invPAR").value || "",
       VPD: $("invVPD").textContent || "",
-      note: recNote
+      note
     });
     $("invObs").value = "";
     alert("Acción registrada en el historial.");
   };
 
-  // Historial
   $("exportCSV").onclick = exportToCSV;
   $("clearHist").onclick = ()=>{
     if (confirm("¿Borrar todo el historial guardado en este navegador?")){
@@ -619,6 +566,7 @@
   };
 
   // Inicial
+  loadPulse();
   show("screenHome");
   renderHist();
 </script>
