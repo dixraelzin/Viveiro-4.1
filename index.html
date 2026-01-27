@@ -4,63 +4,145 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>App Vivero — Minijardín & Invernadero</title>
+
   <style>
     :root{
-      --bg:#0b1220; --card:#111a2d; --card2:#0f1830; --text:#e8eefc; --muted:#a9b5d6;
-      --ok:#2dd4bf; --warn:#fbbf24; --bad:#fb7185; --line:#243155; --btn:#1d2a4a;
+      /* Light theme */
+      --bg:#f6f8ff;
+      --card:#ffffff;
+      --card2:#f3f6ff;
+      --text:#0b1220;
+      --muted:#4b5563;
+
+      /* Accent blue */
+      --accent:#2563eb;
+      --accent2:#60a5fa;
+
+      /* Status */
+      --ok:#0ea5e9;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+
+      --line:#d7def5;
+      --btn:#edf2ff;
     }
+
     *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial; background:linear-gradient(180deg,#0b1220,#070c16); color:var(--text)}
+    body{
+      margin:0;
+      font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      background:linear-gradient(180deg, var(--bg), #ffffff);
+      color:var(--text)
+    }
     .wrap{max-width:1100px;margin:0 auto;padding:18px}
     .top{display:flex;gap:12px;align-items:center;justify-content:space-between;margin-bottom:14px}
     .brand{display:flex;gap:10px;align-items:center}
-    .logo{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,#2dd4bf,#60a5fa);box-shadow:0 10px 30px rgba(0,0,0,.35)}
-    .title{font-weight:700;letter-spacing:.2px}
+    .logo{
+      width:38px;height:38px;border-radius:12px;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      box-shadow:0 10px 30px rgba(37,99,235,.18)
+    }
+    .title{font-weight:800;letter-spacing:.2px}
     .subtitle{color:var(--muted);font-size:13px;margin-top:2px}
     .row{display:flex;flex-wrap:wrap;gap:12px}
-    .card{background:linear-gradient(180deg,var(--card),var(--card2)); border:1px solid var(--line);
-      border-radius:18px; padding:14px; box-shadow:0 10px 28px rgba(0,0,0,.28)}
+    .card{
+      background:linear-gradient(180deg,var(--card),var(--card2));
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:14px;
+      box-shadow:0 10px 28px rgba(10,25,60,.08)
+    }
     .card h3{margin:0 0 10px 0;font-size:15px}
     .card p{margin:6px 0;color:var(--muted);font-size:13px;line-height:1.35}
     .grow{flex:1 1 380px}
     .half{flex:1 1 320px}
-    .btn{background:var(--btn);border:1px solid var(--line);color:var(--text);
-      border-radius:14px;padding:10px 12px;cursor:pointer;font-weight:650}
-    .btn:hover{filter:brightness(1.08)}
-    .btnPrimary{background:linear-gradient(135deg,#2dd4bf,#60a5fa); border:none; color:#07101e}
-    .btnDanger{background:linear-gradient(135deg,#fb7185,#f97316); border:none; color:#16070a}
+
+    .btn{
+      background:var(--btn);
+      border:1px solid var(--line);
+      color:var(--text);
+      border-radius:14px;
+      padding:10px 12px;
+      cursor:pointer;
+      font-weight:750
+    }
+    .btn:hover{filter:brightness(1.03)}
+    .btnPrimary{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      border:none;
+      color:#fff
+    }
+    .btnDanger{
+      background:linear-gradient(135deg,#ef4444,#f97316);
+      border:none;
+      color:#fff
+    }
     .btnGhost{background:transparent}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line); color:var(--muted);font-size:12px}
+
+    .pill{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+      color:var(--muted);font-size:12px;background:#fff
+    }
+
     .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
     @media(max-width:620px){.grid{grid-template-columns:repeat(1,minmax(0,1fr))}}
+
     label{display:block;color:var(--muted);font-size:12px;margin:8px 0 4px}
     input,select,textarea{
-      width:100%; padding:10px 10px; border-radius:12px; border:1px solid var(--line);
-      background:#0b1326; color:var(--text); outline:none;
+      width:100%;
+      padding:10px 10px;
+      border-radius:12px;
+      border:1px solid var(--line);
+      background:#ffffff;
+      color:var(--text);
+      outline:none;
     }
     textarea{min-height:70px;resize:vertical}
-    .big{font-size:30px;font-weight:800;letter-spacing:.2px}
+
+    .big{font-size:32px;font-weight:900;letter-spacing:.2px}
     .kpi{display:flex;align-items:flex-end;justify-content:space-between;gap:10px}
     .kpi small{color:var(--muted)}
-    .badge{padding:6px 10px;border-radius:999px;font-weight:800;font-size:12px}
-    .ok{background:rgba(45,212,191,.15); color:var(--ok); border:1px solid rgba(45,212,191,.35)}
-    .warn{background:rgba(251,191,36,.12); color:var(--warn); border:1px solid rgba(251,191,36,.35)}
-    .bad{background:rgba(251,113,133,.14); color:var(--bad); border:1px solid rgba(251,113,133,.35)}
+
+    .badge{padding:6px 10px;border-radius:999px;font-weight:900;font-size:12px}
+    .ok{background:rgba(14,165,233,.10); color:var(--ok); border:1px solid rgba(14,165,233,.25)}
+    .warn{background:rgba(245,158,11,.12); color:var(--warn); border:1px solid rgba(245,158,11,.25)}
+    .bad{background:rgba(239,68,68,.10); color:var(--bad); border:1px solid rgba(239,68,68,.25)}
+
     .rec{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
     @media(max-width:700px){.rec{grid-template-columns:repeat(1,minmax(0,1fr))}}
-    .recItem{border:1px solid var(--line); border-radius:16px; padding:12px; background:#0b1326}
+    .recItem{
+      border:1px solid var(--line);
+      border-radius:16px;
+      padding:12px;
+      background:#ffffff
+    }
     .recItem .name{color:var(--muted);font-size:12px}
-    .recItem .value{font-size:18px;font-weight:850;margin-top:4px}
+    .recItem .value{font-size:18px;font-weight:900;margin-top:4px}
+
     .hr{height:1px;background:var(--line);margin:10px 0}
     .hide{display:none !important}
+
     table{width:100%;border-collapse:collapse}
     th,td{border-bottom:1px solid var(--line);padding:8px 6px;text-align:left;font-size:12px}
-    th{color:var(--muted);font-weight:700}
-    .muted{color:var(--muted)}
+    th{color:var(--muted);font-weight:800}
+
     .right{display:flex;gap:8px;align-items:center;justify-content:flex-end}
-    .timerBox{border:1px dashed rgba(251,191,36,.55); background:rgba(251,191,36,.08); padding:10px;border-radius:16px}
+
+    .timerBox{
+      border:1px dashed rgba(245,158,11,.55);
+      background:rgba(245,158,11,.10);
+      padding:10px;border-radius:16px
+    }
     .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,monospace}
+
+    .hint{
+      background:rgba(37,99,235,.06);
+      border:1px solid rgba(37,99,235,.15);
+      padding:10px;border-radius:14px;
+      color:var(--muted);font-size:12px;
+    }
   </style>
 </head>
 
@@ -85,24 +167,24 @@
   <div id="screenHome" class="row">
     <div class="card grow">
       <h3>Seleccionar sector</h3>
-      <p>Elige el sector para ingresar datos, calcular indicadores (VPD) y recibir recomendaciones operativas.</p>
+      <p>Ingresa datos, calcula VPD y recibe recomendaciones operativas (ventilación → malla → emergencia).</p>
       <div class="hr"></div>
       <div class="grid">
         <button class="btn btnPrimary" id="goMin">🌱 Minijardín Clonal</button>
         <button class="btn btnPrimary" id="goInv">🌿 Invernadero</button>
         <button class="btn" id="goSOP">📄 SOP (Normas)</button>
       </div>
-      <p class="muted" style="margin-top:10px">
-        Nota: el historial se guarda en este navegador (LocalStorage) y se puede exportar a CSV para Excel.
+      <p class="hint" style="margin-top:10px">
+        El historial se guarda en este navegador (LocalStorage) y se puede exportar a CSV para Excel.
       </p>
     </div>
 
     <div class="card half">
       <h3>Indicadores clave</h3>
-      <p><b>VPD</b> (kPa) se calcula con Temperatura y Humedad Relativa. PAR se usa para recomendar el uso de malla blanca.</p>
+      <p><b>VPD</b> (kPa) se calcula con Temperatura y Humedad Relativa. PAR ayuda a decidir uso de malla blanca.</p>
       <div class="hr"></div>
       <p class="muted">
-        Sin nebulización: orden recomendado <b>ventilación</b> → <b>sombreo</b> → agua en piso solo emergencia.
+        Orden recomendado: <b>ventilación</b> (cenital + laterales) → <b>sombreo</b> (malla) → agua en piso <b>solo emergencia</b>.
       </p>
     </div>
   </div>
@@ -114,13 +196,13 @@
       <div class="hr"></div>
       <p><b>Reglas no negociables</b></p>
       <ul class="muted">
-        <li>Prohibido mojar el techo/plástico para “bajar temperatura”.</li>
-        <li>Prohibido dejar charcos en el piso/pasillos.</li>
+        <li>Prohibido mojar techo/plástico para “bajar temperatura”.</li>
+        <li>Prohibido dejar charcos en piso/pasillos.</li>
         <li>En días calurosos: prioridad intercambio de aire (cenital + laterales).</li>
       </ul>
-      <p><b>Uso de agua en piso (solo emergencia)</b></p>
+      <p><b>Agua en piso (solo emergencia)</b></p>
       <ul class="muted">
-        <li>Solo si VPD está en rojo y con cenital + laterales abiertas.</li>
+        <li>Solo si VPD está crítico y con cenital + laterales abiertas.</li>
         <li>Pulso máximo: 2 min ON / 20 min OFF (bloqueo). No repetir si hay charcos.</li>
       </ul>
       <div class="hr"></div>
@@ -132,19 +214,41 @@
   <div id="screenMin" class="row hide">
     <div class="card half">
       <h3>Minijardín — Datos</h3>
+
       <label>Temperatura del aire (°C)</label>
       <input id="minT" type="number" step="0.1" placeholder="Ej: 31.5" />
+
       <label>Humedad relativa (%)</label>
       <input id="minRH" type="number" step="1" placeholder="Ej: 22" />
+
       <label>PAR (µmol·m⁻²·s⁻¹)</label>
       <input id="minPAR" type="number" step="1" placeholder="Ej: 1050" />
-      <label>Observación (opcional)</label>
-      <textarea id="minObs" placeholder="Ej: ambiente pesado / hojas duras / pasillo húmedo…"></textarea>
+
+      <label>Observación (lista)</label>
+      <select id="minObsSel">
+        <option value="">— Seleccionar —</option>
+        <option>Ambiente pesado (sin circulación)</option>
+        <option>Hojas duras / estrés</option>
+        <option>Pasillo húmedo / riesgo de charcos</option>
+        <option>Temperatura alta</option>
+        <option>Humedad alta / riesgo sanitario</option>
+        <option>Radiación alta / PAR alto</option>
+        <option>Sustrato seco (revisar riego)</option>
+        <option>Sustrato muy húmedo (revisar drenaje)</option>
+        <option value="OTRO">Otro (escribir)</option>
+      </select>
+
+      <div id="minObsOtherWrap" class="hide">
+        <label>Otro (especificar)</label>
+        <input id="minObsOther" type="text" placeholder="Ej: puerta abierta / viento fuerte / etc." />
+      </div>
+
       <div class="hr"></div>
       <div class="row" style="justify-content:space-between">
         <button class="btn btnPrimary" id="minCalc">Calcular</button>
         <button class="btn" id="minSave">Registrar acción</button>
       </div>
+
       <p class="muted" style="margin-top:10px">
         Consejo: medir a altura del dosel. Si tienes 4 puntos, usa el peor VPD como referencia.
       </p>
@@ -163,10 +267,22 @@
       <div class="hr"></div>
 
       <div class="rec">
-        <div class="recItem"><div class="name">Ventana cenital</div><div class="value" id="minCen">—</div></div>
-        <div class="recItem"><div class="name">Ventanas laterales</div><div class="value" id="minLat">—</div></div>
-        <div class="recItem"><div class="name">Malla blanca (por PAR)</div><div class="value" id="minMalla">—</div></div>
-        <div class="recItem"><div class="name">Agua en piso</div><div class="value" id="minPiso">—</div></div>
+        <div class="recItem">
+          <div class="name">Ventana cenital</div>
+          <div class="value" id="minCen">—</div>
+        </div>
+        <div class="recItem">
+          <div class="name">Ventanas laterales</div>
+          <div class="value" id="minLat">—</div>
+        </div>
+        <div class="recItem">
+          <div class="name">Malla blanca (por PAR)</div>
+          <div class="value" id="minMalla">—</div>
+        </div>
+        <div class="recItem">
+          <div class="name">Agua en piso</div>
+          <div class="value" id="minPiso">—</div>
+        </div>
       </div>
 
       <div class="hr"></div>
@@ -174,7 +290,7 @@
       <div id="timerSection" class="timerBox hide">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
           <div>
-            <div style="font-weight:850">Pulso piso (Emergencia)</div>
+            <div style="font-weight:900">Pulso piso (Emergencia)</div>
             <div class="muted">Máximo 2 min ON / 20 min OFF · Prohibido repetir durante el bloqueo</div>
           </div>
           <button class="btn btnDanger" id="startPulse">⏱️ Iniciar pulso 2 min</button>
@@ -184,28 +300,56 @@
       </div>
 
       <p class="muted" id="minNote" style="margin-top:10px"></p>
+
+      <div class="hr"></div>
+      <div class="recItem">
+        <div class="name">Recomendaciones (paso a paso)</div>
+        <div class="value" style="font-size:14px;font-weight:800" id="minSteps">—</div>
+        <p class="muted" style="margin:8px 0 0 0" id="minNextCheck">—</p>
+      </div>
     </div>
   </div>
 
-  <!-- INVERNADERO (BASE) -->
+  <!-- INVERNADERO -->
   <div id="screenInv" class="row hide">
     <div class="card half">
       <h3>Invernadero — Datos (Base)</h3>
-      <p class="muted">Contenedor para pegar tu lógica real del invernadero.</p>
+
       <label>Fase</label>
       <select id="invPhase">
         <option value="M1">M1</option>
         <option value="M2">M2</option>
         <option value="M3">M3</option>
       </select>
+
       <label>Temperatura del aire (°C)</label>
       <input id="invT" type="number" step="0.1" placeholder="Ej: 28.0" />
+
       <label>Humedad relativa (%)</label>
       <input id="invRH" type="number" step="1" placeholder="Ej: 70" />
+
       <label>PAR (µmol·m⁻²·s⁻¹)</label>
       <input id="invPAR" type="number" step="1" placeholder="Ej: 350" />
-      <label>Observación (opcional)</label>
-      <textarea id="invObs" placeholder="Ej: bandejas secas / VPD alto / ajuste de pulsos…"></textarea>
+
+      <label>Observación (lista)</label>
+      <select id="invObsSel">
+        <option value="">— Seleccionar —</option>
+        <option>Bandejas secas / revisar pulsos</option>
+        <option>Sustrato muy húmedo / revisar drenaje</option>
+        <option>Hojas mojadas / riesgo sanitario</option>
+        <option>Temperatura alta</option>
+        <option>Humedad baja</option>
+        <option>Humedad alta</option>
+        <option>PAR alto / exceso de radiación</option>
+        <option>VPD alto (estrés)</option>
+        <option value="OTRO">Otro (escribir)</option>
+      </select>
+
+      <div id="invObsOtherWrap" class="hide">
+        <label>Otro (especificar)</label>
+        <input id="invObsOther" type="text" placeholder="Ej: cambio de malla / ajuste manual / etc." />
+      </div>
+
       <div class="hr"></div>
       <div class="row" style="justify-content:space-between">
         <button class="btn btnPrimary" id="invCalc">Calcular</button>
@@ -214,7 +358,7 @@
     </div>
 
     <div class="card half">
-      <h3>Invernadero — Indicadores / Recomendación (Base)</h3>
+      <h3>Invernadero — Indicadores / Recomendación</h3>
       <div class="kpi">
         <div>
           <small>VPD (kPa)</small>
@@ -222,12 +366,30 @@
         </div>
         <div><div id="invBadge" class="badge ok">—</div></div>
       </div>
+
       <div class="hr"></div>
+
       <div class="rec">
-        <div class="recItem"><div class="name">Recomendación general</div><div class="value" id="invRec">—</div></div>
-        <div class="recItem"><div class="name">Nota</div><div class="value" id="invNote">—</div></div>
+        <div class="recItem">
+          <div class="name">Recomendación general</div>
+          <div class="value" id="invRec">—</div>
+        </div>
+        <div class="recItem">
+          <div class="name">Nota</div>
+          <div class="value" id="invNote">—</div>
+        </div>
       </div>
-      <p class="muted" style="margin-top:10px">Luego reemplazamos esto por tu lógica de pulsos/acciones.</p>
+
+      <div class="hr"></div>
+      <div class="recItem">
+        <div class="name">Recomendaciones (paso a paso)</div>
+        <div class="value" style="font-size:14px;font-weight:800" id="invSteps">—</div>
+        <p class="muted" style="margin:8px 0 0 0" id="invNextCheck">—</p>
+      </div>
+
+      <p class="muted" style="margin-top:10px">
+        (Base) Luego podemos reemplazar “Recomendación general” por tu lógica exacta de pulsos.
+      </p>
     </div>
   </div>
 
@@ -235,7 +397,8 @@
   <div id="screenHist" class="row hide">
     <div class="card grow">
       <h3>Historial</h3>
-      <p class="muted">Guardado localmente en este navegador. Exporta a CSV para Excel.</p>
+      <p class="muted">Guardado localmente en este navegador. Exporta a CSV para analizar en Excel.</p>
+
       <div class="hr"></div>
       <div class="row" style="justify-content:space-between;align-items:center">
         <div class="row">
@@ -250,7 +413,14 @@
         <table>
           <thead>
           <tr>
-            <th>Fecha/Hora</th><th>Sector</th><th>Fase</th><th>T (°C)</th><th>HR (%)</th><th>PAR</th><th>VPD (kPa)</th><th>Acción/Nota</th>
+            <th>Fecha/Hora</th>
+            <th>Sector</th>
+            <th>Fase</th>
+            <th>T (°C)</th>
+            <th>HR (%)</th>
+            <th>PAR</th>
+            <th>VPD (kPa)</th>
+            <th>Acción/Nota</th>
           </tr>
           </thead>
           <tbody id="histBody"></tbody>
@@ -261,6 +431,7 @@
 </div>
 
 <script>
+  // ---------- Utilidades ----------
   const $ = (id) => document.getElementById(id);
 
   function nowISO(){
@@ -285,23 +456,28 @@
     if (par < 400) return {txt:"No", note:"PAR bajo: evitar sombreo excesivo."};
     if (par < 800) return {txt:"Opcional", note:"PAR medio: ajustar según temperatura y vigor."};
     if (par < 1200) return {txt:"Sí (recomendada)", note:"PAR alto: usar malla blanca para reducir carga térmica."};
-    return {txt:"Sí (fuerte)", note:"PAR muy alto: malla blanca + ventilación máxima."};
+    return {txt:"Sí (fuerte)", note:"PAR muy alto: malla fuerte + ventilación máxima."};
   }
 
   function minRecomendacion(vpd, par){
     const band = vpdBand(vpd);
     let cen="—", lat="—", piso="Prohibido", showPulse=false;
 
-    if (vpd <= 0.6){ cen="20–40%"; lat="30–60%"; }
-    else if (vpd <= 1.2){ cen="30–60%"; lat="40–70%"; }
-    else if (vpd <= 1.6){ cen="70–100%"; lat="70–100%"; }
-    else { cen="100%"; lat="100%"; piso="Solo emergencia (timer)"; showPulse=true; }
+    if (vpd <= 0.6){
+      cen="20–40%"; lat="30–60%";
+    } else if (vpd <= 1.2){
+      cen="30–60%"; lat="40–70%";
+    } else if (vpd <= 1.6){
+      cen="70–100%"; lat="70–100%";
+    } else {
+      cen="100%"; lat="100%"; piso="Solo emergencia (timer)"; showPulse=true;
+    }
 
     const m = mallaByPAR(par);
 
     let note="";
     if (band.key === "Húmedo") note = "Riesgo sanitario: aumentar intercambio de aire para evitar ambiente pesado.";
-    else if (band.key === "Óptimo") note = "Mantener estabilidad. Prioridad: ventilación + malla blanca según PAR.";
+    else if (band.key === "Óptimo") note = "Mantener estabilidad. Prioridad: ventilación + malla según PAR.";
     else if (band.key === "Atención") note = "Estrés en aumento: ventilación alta. Evitar usar agua como control térmico.";
     else note = "Crítico: ventilación máxima + malla. Agua en piso solo pulso controlado, sin charcos.";
 
@@ -315,17 +491,79 @@
     let rec = "Ajustar ventilación y sombreo.";
     let note = `Fase ${phase}. ${m.note}`;
 
-    if (band.key === "Húmedo"){ rec="Incrementar ventilación (evitar exceso de humedad)."; note=`Riesgo sanitario en ${phase}.`; }
-    else if (band.key === "Óptimo"){ rec="Mantener setpoints y rutina estable."; note=`Buen rango para ${phase}.`; }
-    else if (band.key === "Atención"){ rec="Aumentar ventilación / revisar pulsos y sombra."; note=`VPD subiendo en ${phase}.`; }
-    else { rec="Modo crítico: ventilación máxima, revisar manejo hídrico."; note=`VPD crítico en ${phase}.`; }
+    if (band.key === "Húmedo"){
+      rec = "Incrementar ventilación (evitar exceso de humedad).";
+      note = `Riesgo sanitario en ${phase}. Evitar mojado foliar prolongado.`;
+    } else if (band.key === "Óptimo"){
+      rec = "Mantener setpoints y rutina estable.";
+      note = `Buen rango para ${phase}.`;
+    } else if (band.key === "Atención"){
+      rec = "Aumentar ventilación / revisar pulsos y sombra.";
+      note = `VPD subiendo en ${phase}.`;
+    } else {
+      rec = "Modo crítico: ventilación máxima + malla; revisar manejo hídrico (pulsos/caudal).";
+      note = `VPD crítico en ${phase}.`;
+    }
 
     return {band, rec, note};
   }
 
-  // ====== Historial
-  const KEY = "app_vivero_hist_v1";
+  function buildStepsMin(vpd, rh, par){
+    const steps = [];
+    steps.push("1) Ventilación primero (cenital + laterales).");
 
+    if (par >= 800) steps.push("2) Activar malla blanca (PAR alto) para bajar carga térmica.");
+    else steps.push("2) Malla según PAR (evitar sombreo si PAR es bajo).");
+
+    if (vpd >= 1.6){
+      steps.push("3) Modo crítico: 100% cenital + 100% laterales.");
+      steps.push("4) Agua en piso SOLO pulso controlado (2 min ON / 20 min OFF) y sin charcos.");
+      steps.push("5) Re-chequear en 5–10 min.");
+    } else if (vpd >= 1.2){
+      steps.push("3) Subir ventilación (≥70%) y re-chequear en 10–15 min.");
+      steps.push("4) No usar agua en piso como control térmico.");
+    } else if (vpd <= 0.6){
+      steps.push("3) Riesgo sanitario: aumentar intercambio de aire (evitar ambiente pesado).");
+      steps.push("4) Evitar superficies mojadas y charcos.");
+      steps.push("5) Re-chequear en 15–20 min.");
+    } else {
+      steps.push("3) Rango bueno: mantener estable y re-chequear en 20–30 min.");
+    }
+
+    if (rh <= 35) steps.push("⚠️ HR muy baja: riesgo de estrés. Ventilar + malla, evitar cambios bruscos.");
+    if (rh >= 85) steps.push("⚠️ HR muy alta: riesgo sanitario. Ventilar y evitar mojado prolongado.");
+    if (par >= 1200) steps.push("⚠️ PAR extremo: malla fuerte + ventilación máxima.");
+
+    return steps;
+  }
+
+  function buildStepsInv(vpd, rh, par, phase){
+    const steps = [];
+    steps.push(`Fase ${phase}: mantener estabilidad y evitar cambios bruscos.`);
+    steps.push("1) Revisar bandejas/sustrato antes de cambiar clima (confirmar si es problema hídrico).");
+    steps.push("2) Ajustar ventilación según VPD; usar malla según PAR.");
+
+    if (vpd >= 1.6){
+      steps.push("3) Crítico: aumentar ventilación + activar malla (reducir radiación).");
+      steps.push("4) Re-chequear en 5–10 min. Si persiste, revisar pulsos/caudal.");
+    } else if (vpd >= 1.2){
+      steps.push("3) Atención: subir ventilación / revisar pulsos, re-chequear en 10–15 min.");
+    } else if (vpd <= 0.6){
+      steps.push("3) Húmedo: ventilar para bajar riesgo sanitario; evitar mojado foliar prolongado.");
+      steps.push("4) Re-chequear en 15–20 min.");
+    } else {
+      steps.push("3) Óptimo: mantener setpoint y re-chequear en 20–30 min.");
+    }
+
+    if (par >= 900) steps.push("⚠️ PAR alto: activar malla y evitar calentamiento del dosel.");
+    if (rh >= 90) steps.push("⚠️ HR muy alta: riesgo sanitario. Ventilar y reducir mojado foliar.");
+    if (rh <= 45) steps.push("⚠️ HR baja: riesgo de deshidratación. Revisar pulsos y sombra.");
+
+    return steps;
+  }
+
+  // ---------- Historial (LocalStorage) ----------
+  const KEY = "app_vivero_hist_v1";
   function loadHist(){
     try{ return JSON.parse(localStorage.getItem(KEY) || "[]"); }
     catch(e){ return []; }
@@ -337,7 +575,6 @@
     saveHist(arr);
     renderHist();
   }
-
   function renderHist(){
     const arr = loadHist();
     $("histCount").textContent = `${arr.length} registros`;
@@ -364,7 +601,6 @@
     const esc = s.replaceAll('"','""').replaceAll("\n"," ").replaceAll("\r"," ");
     return `"${esc}"`;
   }
-
   function exportToCSV(){
     const arr = loadHist();
     const headers = ["FechaHora","Sector","Fase","T_C","HR_pct","PAR","VPD_kPa","AccionNota"];
@@ -384,7 +620,7 @@
     URL.revokeObjectURL(url);
   }
 
-  // ====== Navegación
+  // ---------- Navegación ----------
   function show(screenId){
     ["screenHome","screenMin","screenInv","screenHist","screenSOP"].forEach(id=>{
       $(id).classList.toggle("hide", id !== screenId);
@@ -392,7 +628,7 @@
     if (screenId === "screenHist") renderHist();
   }
 
-  // ====== Timer pulso (persistente)
+  // ---------- Timer pulso piso (persistente) ----------
   const PULSE_KEY = "app_vivero_pulse_state_v1";
   let pulseLockUntil = 0;
   let pulseOnUntil = 0;
@@ -408,7 +644,6 @@
   function savePulse(){
     localStorage.setItem(PULSE_KEY, JSON.stringify({pulseLockUntil, pulseOnUntil}));
   }
-
   function stopPulseTickerIfIdle(){
     const now = Date.now();
     if (now >= pulseOnUntil && now >= pulseLockUntil && pulseInterval){
@@ -416,7 +651,6 @@
       pulseInterval = null;
     }
   }
-
   function updatePulseUI(){
     const now = Date.now();
     const status = $("pulseStatus");
@@ -432,7 +666,6 @@
     }
     stopPulseTickerIfIdle();
   }
-
   function startPulse(){
     const now = Date.now();
     if (now < pulseLockUntil){ updatePulseUI(); return; }
@@ -456,10 +689,26 @@
     });
   }
 
-  // ====== Eventos UI
+  // ---------- Observación (lista -> otro) ----------
+  function getObsValue(selId, otherId){
+    const sel = $(selId).value;
+    if (sel === "OTRO") return ($(otherId).value || "").trim();
+    return (sel || "").trim();
+  }
+
+  function wireObs(selId, wrapId){
+    $(selId).addEventListener("change", (e)=>{
+      const v = e.target.value;
+      $(wrapId).classList.toggle("hide", v !== "OTRO");
+    });
+  }
+
+  // ---------- Eventos UI ----------
   function tickClock(){
     const d = new Date();
-    $("nowPill").textContent = d.toLocaleString("es-CL", {weekday:"short", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"});
+    $("nowPill").textContent = d.toLocaleString("es-CL", {
+      weekday:"short", day:"2-digit", month:"short", hour:"2-digit", minute:"2-digit"
+    });
   }
   setInterval(tickClock, 1000); tickClock();
 
@@ -470,12 +719,20 @@
   $("goSOP").onclick = ()=>show("screenSOP");
   $("backFromSOP").onclick = ()=>show("screenHome");
 
+  // Wire dropdowns
+  wireObs("minObsSel", "minObsOtherWrap");
+  wireObs("invObsSel", "invObsOtherWrap");
+
+  // Minijardín calcular
   $("minCalc").onclick = ()=>{
     const T = parseFloat($("minT").value);
     const RH = parseFloat($("minRH").value);
     const PAR = parseFloat($("minPAR").value);
+
     if (Number.isNaN(T) || Number.isNaN(RH) || Number.isNaN(PAR)){
       $("minNote").textContent = "Completa Temperatura, Humedad y PAR.";
+      $("minSteps").textContent = "—";
+      $("minNextCheck").textContent = "—";
       return;
     }
 
@@ -485,6 +742,7 @@
     const r = minRecomendacion(vpd, PAR);
     $("minBadge").className = `badge ${r.band.cls}`;
     $("minBadge").textContent = r.band.key;
+
     $("minCen").textContent = r.cen;
     $("minLat").textContent = r.lat;
     $("minMalla").textContent = r.malla;
@@ -496,16 +754,26 @@
       updatePulseUI();
       if (!pulseInterval) pulseInterval = setInterval(updatePulseUI, 500);
     }
+
+    const steps = buildStepsMin(vpd, RH, PAR);
+    $("minSteps").innerHTML = "• " + steps.join("<br>• ");
+    $("minNextCheck").textContent =
+      (vpd >= 1.6) ? "Re-evaluar en 5–10 min." :
+      (vpd >= 1.2) ? "Re-evaluar en 10–15 min." :
+      (vpd <= 0.6) ? "Re-evaluar en 15–20 min." :
+                    "Re-evaluar en 20–30 min.";
   };
 
   $("startPulse").onclick = startPulse;
 
+  // Minijardín registrar
   $("minSave").onclick = ()=>{
-    const obs = ($("minObs").value || "").trim();
+    const obs = getObsValue("minObsSel", "minObsOther");
     const note =
       `Cenital: ${$("minCen").textContent}; Laterales: ${$("minLat").textContent}; ` +
       `Malla: ${$("minMalla").textContent}; Piso: ${$("minPiso").textContent}. ` +
       (obs ? `Obs: ${obs}` : "");
+
     addRecord({
       ts: nowISO(),
       sector: "Minijardín",
@@ -516,33 +784,56 @@
       VPD: $("minVPD").textContent || "",
       note
     });
-    $("minObs").value = "";
+
+    // reset obs
+    $("minObsSel").value = "";
+    $("minObsOther").value = "";
+    $("minObsOtherWrap").classList.add("hide");
+
     alert("Acción registrada en el historial.");
   };
 
+  // Invernadero calcular
   $("invCalc").onclick = ()=>{
     const phase = $("invPhase").value;
     const T = parseFloat($("invT").value);
     const RH = parseFloat($("invRH").value);
     const PAR = parseFloat($("invPAR").value);
+
     if (Number.isNaN(T) || Number.isNaN(RH) || Number.isNaN(PAR)){
       $("invRec").textContent = "Completa Temperatura, Humedad y PAR.";
       $("invNote").textContent = "—";
+      $("invSteps").textContent = "—";
+      $("invNextCheck").textContent = "—";
       return;
     }
+
     const vpd = calcVPD(T, RH);
     $("invVPD").textContent = vpd.toFixed(2);
 
     const r = invRecomendacionBase(phase, vpd, PAR);
     $("invBadge").className = `badge ${r.band.cls}`;
     $("invBadge").textContent = r.band.key;
+
     $("invRec").textContent = r.rec;
     $("invNote").textContent = r.note;
+
+    const steps = buildStepsInv(vpd, RH, PAR, phase);
+    $("invSteps").innerHTML = "• " + steps.join("<br>• ");
+    $("invNextCheck").textContent =
+      (vpd >= 1.6) ? "Re-evaluar en 5–10 min." :
+      (vpd >= 1.2) ? "Re-evaluar en 10–15 min." :
+      (vpd <= 0.6) ? "Re-evaluar en 15–20 min." :
+                    "Re-evaluar en 20–30 min.";
   };
 
+  // Invernadero registrar
   $("invSave").onclick = ()=>{
-    const obs = ($("invObs").value || "").trim();
-    const note = `Fase ${$("invPhase").value}. Rec: ${$("invRec").textContent}. ` + (obs ? `Obs: ${obs}` : "");
+    const obs = getObsValue("invObsSel", "invObsOther");
+    const note =
+      `Fase ${$("invPhase").value}. Rec: ${$("invRec").textContent}. ` +
+      (obs ? `Obs: ${obs}` : "");
+
     addRecord({
       ts: nowISO(),
       sector: "Invernadero",
@@ -553,10 +844,16 @@
       VPD: $("invVPD").textContent || "",
       note
     });
-    $("invObs").value = "";
+
+    // reset obs
+    $("invObsSel").value = "";
+    $("invObsOther").value = "";
+    $("invObsOtherWrap").classList.add("hide");
+
     alert("Acción registrada en el historial.");
   };
 
+  // Historial
   $("exportCSV").onclick = exportToCSV;
   $("clearHist").onclick = ()=>{
     if (confirm("¿Borrar todo el historial guardado en este navegador?")){
