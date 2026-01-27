@@ -529,7 +529,10 @@
 
   // init
   loadProgramas();
+  autoSelectPrograma();           // escolhe o P certo ao abrir
+  setInterval(autoSelectPrograma, 60 * 1000); // atualiza a cada 1 min
   calcular(false);
+
 </script>
 </body>
 </html>
