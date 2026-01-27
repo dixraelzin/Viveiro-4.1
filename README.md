@@ -1,1 +1,489 @@
-# decisor-vpd
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Operador • Decisor VPD/PAR</title>
+  <meta name="theme-color" content="#1f6feb"/>
+
+  <style>
+    :root{
+      --bg1:#0ea5e9; /* sky */
+      --bg2:#7c3aed; /* violet */
+      --card:#ffffff;
+      --text:#0f172a;
+      --muted:#64748b;
+      --ok:#16a34a;
+      --warn:#f59e0b;
+      --bad:#ef4444;
+      --line:#e5e7eb;
+      --shadow: 0 10px 24px rgba(2,6,23,.12);
+      --r:16px;
+    }
+
+    *{ box-sizing:border-box; }
+    body{
+      margin:0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      color:var(--text);
+      background: radial-gradient(1200px 600px at 20% 0%, rgba(14,165,233,.35), transparent 60%),
+                  radial-gradient(1200px 600px at 80% 0%, rgba(124,58,237,.25), transparent 60%),
+                  #f8fafc;
+      padding: 16px;
+    }
+
+    .wrap{ max-width: 820px; margin: 0 auto; }
+
+    .top{
+      background: linear-gradient(135deg, var(--bg1), var(--bg2));
+      border-radius: 22px;
+      padding: 16px 16px 14px;
+      color:#fff;
+      box-shadow: var(--shadow);
+      position: relative;
+      overflow:hidden;
+    }
+    .top::after{
+      content:"";
+      position:absolute;
+      inset:-60px -120px auto auto;
+      width:280px;height:280px;
+      background: rgba(255,255,255,.14);
+      border-radius: 999px;
+      filter: blur(0px);
+      transform: rotate(12deg);
+    }
+    .titleRow{ display:flex; gap:12px; align-items:center; }
+    .badgeIcon{
+      width:44px;height:44px;border-radius:14px;
+      background: rgba(255,255,255,.18);
+      display:grid;place-items:center;
+      border: 1px solid rgba(255,255,255,.25);
+      flex:0 0 auto;
+    }
+    .top h1{ margin:0; font-size: 18px; letter-spacing:.2px;}
+    .top p{ margin:4px 0 0; font-size: 13px; opacity:.9; }
+
+    .grid{
+      display:grid;
+      grid-template-columns: 1.1fr .9fr;
+      gap: 14px;
+      margin-top: 14px;
+    }
+    @media (max-width: 860px){
+      .grid{ grid-template-columns: 1fr; }
+    }
+
+    .card{
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 14px;
+      box-shadow: 0 6px 18px rgba(2,6,23,.06);
+    }
+    .card h2{
+      margin:0 0 10px 0;
+      font-size: 14px;
+      display:flex; align-items:center; gap:8px;
+    }
+    .muted{ color: var(--muted); font-size: 12.5px; }
+    label{
+      display:block;
+      font-weight: 700;
+      font-size: 12.5px;
+      margin: 10px 0 6px;
+      color: #111827;
+    }
+    input, select{
+      width:100%;
+      border: 1px solid #d1d5db;
+      border-radius: 12px;
+      padding: 11px 12px;
+      font-size: 16px;
+      background: #fff;
+      outline:none;
+    }
+    input:focus, select:focus{
+      border-color:#60a5fa;
+      box-shadow: 0 0 0 4px rgba(96,165,250,.22);
+    }
+
+    .moduleBtns{
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+    .mBtn{
+      border:1px solid #d1d5db;
+      background:#fff;
+      border-radius: 14px;
+      padding: 10px 12px;
+      cursor:pointer;
+      display:flex; align-items:center; gap:10px;
+      min-width: 160px;
+      transition: .15s ease;
+      box-shadow: 0 4px 12px rgba(2,6,23,.04);
+    }
+    .mBtn:hover{ transform: translateY(-1px); }
+    .mBtn.active{
+      border-color:#60a5fa;
+      box-shadow: 0 0 0 4px rgba(96,165,250,.22);
+    }
+    .mTag{
+      width:34px;height:34px;border-radius:12px;
+      display:grid;place-items:center;
+      color:#fff;font-weight:800;
+      background: linear-gradient(135deg, #22c55e, #0ea5e9);
+      flex:0 0 auto;
+    }
+    .mBtn[data-m="2"] .mTag{ background: linear-gradient(135deg, #f59e0b, #ef4444); }
+    .mBtn[data-m="3"] .mTag{ background: linear-gradient(135deg, #7c3aed, #1f6feb); }
+    .mInfo{ line-height: 1.1; }
+    .mInfo b{ display:block; font-size: 13px; }
+    .mInfo span{ font-size: 12px; color: var(--muted); }
+
+    .row2{ display:grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media (max-width: 520px){
+      .row2{ grid-template-columns: 1fr; }
+      .mBtn{ min-width: 100%; }
+    }
+
+    .btnMain{
+      width:100%;
+      margin-top: 12px;
+      border:0;
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-weight: 800;
+      font-size: 16px;
+      cursor:pointer;
+      background: linear-gradient(135deg, #1f6feb, #0ea5e9);
+      color:#fff;
+      box-shadow: var(--shadow);
+    }
+    .btnMain:active{ transform: translateY(1px); }
+
+    .pill{
+      display:inline-flex; align-items:center; gap:6px;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-weight: 800;
+      font-size: 12px;
+    }
+    .pill.ok{ background: rgba(22,163,74,.12); color: var(--ok); }
+    .pill.warn{ background: rgba(245,158,11,.14); color: #b45309; }
+    .pill.bad{ background: rgba(239,68,68,.12); color: var(--bad); }
+
+    .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+    .sep{ height:1px; background: var(--line); margin: 10px 0; }
+
+    .programBox{
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 10px 12px;
+      background: #f8fafc;
+    }
+    .programBox b{ display:block; margin-bottom: 4px; }
+    .smallNote{ font-size: 12px; color: var(--muted); margin-top: 8px; }
+
+    ul{ margin: 10px 0 0 18px; padding:0; }
+    li{ margin: 6px 0; }
+  </style>
+</head>
+
+<body>
+  <div class="wrap">
+    <div class="top">
+      <div class="titleRow">
+        <div class="badgeIcon" aria-hidden="true">
+          <!-- leaf + chart icon (inline SVG) -->
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none">
+            <path d="M20 4c-7.5.2-12.5 4-14.5 7.5C3.7 15.2 5.8 20 10.6 20c4 0 7.6-3.3 8.6-8.2.2-1.2.5-4.1.8-7.8Z" stroke="rgba(255,255,255,.95)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M8.2 15.8c1.7-2.1 4.6-4.1 8.5-5.8" stroke="rgba(255,255,255,.95)" stroke-width="1.7" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div>
+          <h1>Decisor Operacional • VPD + PAR</h1>
+          <p>Entrada rápida de clima → recomendação direta pro operador.</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid">
+      <!-- Inputs -->
+      <div class="card">
+        <h2>
+          <!-- sliders icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M4 6h10M4 12h16M4 18h12" stroke="#334155" stroke-width="2" stroke-linecap="round"/>
+            <path d="M16 6v0M14 18v0M8 12v0" stroke="#0ea5e9" stroke-width="6" stroke-linecap="round"/>
+          </svg>
+          Entradas
+        </h2>
+
+        <label>Módulo (equivale à fase)</label>
+        <div class="moduleBtns" role="group" aria-label="Seleção de módulo">
+          <button class="mBtn active" data-m="1" type="button" onclick="setModulo(1)">
+            <div class="mTag">M1</div>
+            <div class="mInfo">
+              <b>Pegamento (D0–D7)</b>
+              <span>VPD 0,3–0,6 | PAR 50–150</span>
+            </div>
+          </button>
+
+          <button class="mBtn" data-m="2" type="button" onclick="setModulo(2)">
+            <div class="mTag">M2</div>
+            <div class="mInfo">
+              <b>Indução (D8–D21)</b>
+              <span>VPD 0,6–0,9 | PAR 150–300</span>
+            </div>
+          </button>
+
+          <button class="mBtn" data-m="3" type="button" onclick="setModulo(3)">
+            <div class="mTag">M3</div>
+            <div class="mInfo">
+              <b>Endurecimento (D22–D35)</b>
+              <span>VPD 0,9–1,2 | PAR 300–500</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="row2">
+          <div>
+            <label>Temperatura (°C)</label>
+            <input id="temp" type="number" step="0.1" placeholder="ex.: 28.5" inputmode="decimal" />
+          </div>
+          <div>
+            <label>Umidade Relativa (%)</label>
+            <input id="ur" type="number" step="0.1" placeholder="ex.: 75" inputmode="decimal" />
+          </div>
+        </div>
+
+        <label>PAR (µmol m⁻² s⁻¹)</label>
+        <input id="par" type="number" step="1" placeholder="ex.: 220" inputmode="numeric" />
+
+        <label>Programa atual (horário)</label>
+        <select id="prog" onchange="renderProgramaInfo()"></select>
+
+        <div class="programBox" id="progInfo" style="margin-top:10px;"></div>
+
+        <button class="btnMain" type="button" onclick="calcular()">
+          Calcular e recomendar
+        </button>
+
+        <div class="smallNote">
+          Dica: se quiser, depois eu coloco “auto-detectar horário” pra ele já escolher o P1–P7 sozinho.
+        </div>
+      </div>
+
+      <!-- Output -->
+      <div class="card">
+        <h2>
+          <!-- spark icon -->
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M12 2l1.5 6L20 10l-6.5 2L12 22l-1.5-10L4 10l6.5-2L12 2Z" stroke="#7c3aed" stroke-width="2" stroke-linejoin="round"/>
+          </svg>
+          Resultado
+        </h2>
+
+        <div id="saida" class="muted">Preencha os campos e toque em <b>Calcular e recomendar</b>.</div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  // -----------------------------
+  // Dados fixos (metas por módulo)
+  // -----------------------------
+  const metas = {
+    1: { vpdMin: 0.3, vpdMax: 0.6, parMin: 50,  parMax: 150 },
+    2: { vpdMin: 0.6, vpdMax: 0.9, parMin: 150, parMax: 300 },
+    3: { vpdMin: 0.9, vpdMax: 1.2, parMin: 300, parMax: 500 }
+  };
+
+  // Programas conforme tabela enviada (P1–P7)
+  // Se P7 não tiver intervalo no seu arquivo, eu deixei como "—" e sem recomendação de ajuste.
+  const programas = [
+    { id:"P1", horario:"08:00–10:00", objetivo:"Arranque suave — evitar deshidratación inicial", on_s:5,  intervalo_min:20 },
+    { id:"P2", horario:"10:00–12:00", objetivo:"Rad subiendo — estabilidad hídrica",         on_s:10, intervalo_min:20 },
+    { id:"P3", horario:"12:00–15:00", objetivo:"Límite térmico — máxima protección hídrica", on_s:10, intervalo_min:8  },
+    { id:"P4", horario:"15:00–16:00", objetivo:"Límite tardío — proteger sin saturar",      on_s:10, intervalo_min:10 },
+    { id:"P5", horario:"16:00–17:30", objetivo:"Tarde caliente + sanitario (menos mojado)", on_s:10, intervalo_min:20 },
+    { id:"P6", horario:"17:30–19:30", objetivo:"Extensión térmica — solo control climático",on_s:8,  intervalo_min:20 },
+    { id:"P7", horario:"19:30–21:00", objetivo:"Ventana sanitaria",                          on_s:0,  intervalo_min:null }
+  ];
+
+  let moduloAtual = 1;
+
+  // -----------------------------
+  // VPD (kPa)
+  // -----------------------------
+  function vpd_kpa(T, RH){
+    const es = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
+    return es * (1 - RH/100);
+  }
+
+  function fmt(n, d=2){
+    return Number(n).toFixed(d);
+  }
+
+  function setModulo(m){
+    moduloAtual = m;
+    document.querySelectorAll(".mBtn").forEach(btn=>{
+      btn.classList.toggle("active", Number(btn.dataset.m) === m);
+    });
+    calcular(false); // recalcula (sem exigir validação completa)
+  }
+
+  function loadProgramas(){
+    const sel = document.getElementById("prog");
+    sel.innerHTML = "";
+    programas.forEach((p, i)=>{
+      const opt = document.createElement("option");
+      opt.value = String(i);
+      opt.textContent = `${p.id} • ${p.horario}`;
+      sel.appendChild(opt);
+    });
+    renderProgramaInfo();
+  }
+
+  function renderProgramaInfo(){
+    const idx = Number(document.getElementById("prog").value || 0);
+    const p = programas[idx];
+    const box = document.getElementById("progInfo");
+
+    const intervalo = (p.intervalo_min === null) ? "—" : `${p.intervalo_min} min`;
+    box.innerHTML = `
+      <b>${p.id} • ${p.horario}</b>
+      <div class="muted">${p.objetivo}</div>
+      <div class="sep"></div>
+      <div class="mono">Colnet ON: ${p.on_s}s • Intervalo: ${intervalo}</div>
+    `;
+  }
+
+  function pill(status, text){
+    return `<span class="pill ${status}">${text}</span>`;
+  }
+
+  // -----------------------------
+  // Lógica de recomendação
+  // - Se VPD alto: reduzir intervalo ~30%
+  // - Se VPD baixo: aumentar intervalo ~30%
+  // - PAR fora da meta: sugerir sombra/laterais (decisão operacional)
+  // -----------------------------
+  function calcular(strict=true){
+    const out = document.getElementById("saida");
+
+    const T = Number(document.getElementById("temp").value);
+    const RH = Number(document.getElementById("ur").value);
+    const PAR = Number(document.getElementById("par").value);
+    const idx = Number(document.getElementById("prog").value || 0);
+    const p = programas[idx];
+
+    // validação mínima
+    if (strict){
+      if (!isFinite(T) || !isFinite(RH) || RH <= 0 || RH > 100){
+        out.innerHTML = `<div>${pill("bad","Dados inválidos")}</div>
+          <div style="margin-top:10px;">Preencha <b>Temperatura</b> e <b>UR</b> (UR entre 1 e 100).</div>`;
+        return;
+      }
+      if (!isFinite(PAR) || PAR < 0){
+        out.innerHTML = `<div>${pill("bad","PAR inválido")}</div>
+          <div style="margin-top:10px;">Preencha o <b>PAR</b> (0 ou maior).</div>`;
+        return;
+      }
+    } else {
+      // se não for strict, só sai se ainda não tem dados
+      if (!isFinite(T) || !isFinite(RH) || RH <= 0 || RH > 100 || !isFinite(PAR) || PAR < 0){
+        return;
+      }
+    }
+
+    const meta = metas[moduloAtual];
+    const vpd = vpd_kpa(T, RH);
+
+    // status VPD
+    let vpdStatus = "ok";
+    if (vpd > meta.vpdMax) vpdStatus = "bad";
+    else if (vpd < meta.vpdMin) vpdStatus = "warn";
+
+    // status PAR
+    let parStatus = "ok";
+    if (PAR > meta.parMax) parStatus = "warn";
+    else if (PAR < meta.parMin) parStatus = "warn";
+
+    // status geral
+    let geral = "ok";
+    if (vpdStatus === "bad") geral = "bad";
+    else if (vpdStatus === "warn" || parStatus === "warn") geral = "warn";
+
+    const rec = [];
+
+    // bloco do programa atual
+    const intervaloTxt = (p.intervalo_min === null) ? "—" : `${p.intervalo_min} min`;
+    rec.push(`<b>Programa atual:</b> ${p.id} (${p.horario}) • <span class="mono">ON ${p.on_s}s / ${intervaloTxt}</span>`);
+
+    // recomendação por VPD
+    if (p.intervalo_min === null){
+      rec.push(`Este programa está marcado como <b>sanitário</b> (sem intervalo definido). Use como regra: evitar “dormir molhado” e priorizar ventilação/limpeza.`);
+    } else {
+      if (vpd > meta.vpdMax){
+        const novoInt = Math.max(1, Math.round(p.intervalo_min * 0.7));
+        rec.push(`VPD <b>acima</b> da meta do ${["M1","M2","M3"][moduloAtual-1]} (${meta.vpdMin}–${meta.vpdMax} kPa).`);
+        rec.push(`Ação: <b>reduzir o intervalo</b> para <b>${novoInt} min</b> (mantendo ON em ${p.on_s}s).`);
+      } else if (vpd < meta.vpdMin){
+        const novoInt = Math.max(1, Math.round(p.intervalo_min * 1.3));
+        rec.push(`VPD <b>abaixo</b> da meta (ambiente muito úmido).`);
+        rec.push(`Ação: <b>aumentar o intervalo</b> para <b>${novoInt} min</b> e melhorar renovação de ar (principalmente fim da tarde).`);
+      } else {
+        rec.push(`VPD dentro da meta. Ação: <b>manter programa</b>.`);
+      }
+    }
+
+    // Regras de PAR (sempre informativa e operacional)
+    if (PAR > meta.parMax){
+      rec.push(`PAR <b>acima</b> da meta (${meta.parMin}–${meta.parMax}). Ação: <b>aumentar sombra</b> / ajustar laterais para reduzir radiação e picos térmicos.`);
+    } else if (PAR < meta.parMin){
+      rec.push(`PAR <b>abaixo</b> da meta (${meta.parMin}–${meta.parMax}). Ação: <b>reduzir sombra</b> se possível (sem elevar VPD além da meta).`);
+    } else {
+      rec.push(`PAR dentro da meta.`);
+    }
+
+    // regra de temperatura
+    if (T > 30){
+      rec.push(`⚠️ <b>T > 30°C</b>: reforçar sombra e abertura de laterais <b>em etapas</b>. Se persistir, considerar <b>pulso extra curto</b> no período crítico.`);
+    }
+
+    // Montagem da tela
+    const statusLabel = (geral === "ok") ? pill("ok","OK") : (geral === "warn" ? pill("warn","Atenção") : pill("bad","Crítico"));
+
+    out.innerHTML = `
+      <div style="display:flex; justify-content:space-between; align-items:center; gap:10px;">
+        <div>${statusLabel}</div>
+        <div class="muted"><b>${["M1","M2","M3"][moduloAtual-1]}</b></div>
+      </div>
+
+      <div class="sep"></div>
+
+      <div class="mono" style="font-size:14px;">
+        T=${fmt(T,1)}°C • UR=${fmt(RH,1)}% • VPD=${fmt(vpd,2)} kPa
+      </div>
+      <div class="mono" style="font-size:14px; margin-top:4px;">
+        PAR=${Math.round(PAR)} µmol m⁻² s⁻¹
+      </div>
+
+      <div class="sep"></div>
+
+      <div><b>Recomendação</b></div>
+      <ul>${rec.map(x=>`<li>${x}</li>`).join("")}</ul>
+
+      <div class="smallNote">
+        Se quiser, eu adiciono: (1) seleção automática do P1–P7 pelo relógio, (2) botão “Registrar ação” e histórico diário.
+      </div>
+    `;
+  }
+
+  // init
+  loadProgramas();
+  calcular(false);
+</script>
+</body>
+</html>
