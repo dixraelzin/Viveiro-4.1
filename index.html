@@ -176,183 +176,14 @@
 </head>
 
 <body>
-  <div class="wrap app">
+ <!-- ÁREA DAS TELAS (stage) -->
+<div class="stage">
 
-    <!-- HEADER (fixo) -->
-    <div class="top">
-      <div class="brand">
-        <div class="logo" aria-hidden="true"></div>
-        <div>
-          <div class="title" id="appTitle">App Vivero PRO</div>
-          <div class="subtitle" id="appSubtitle">Minijardim & Invernadero · Operação segura</div>
-        </div>
-      </div>
-
-      <div class="right">
-        <select id="langSelect" class="pill">
-          <option value="pt">🇧🇷 PT</option>
-          <option value="es">🇪🇸 ES</option>
-        </select>
-
-        <span class="pill" id="clock">—</span>
-
-        <button class="btn btnGhost" id="btnHome">Home</button>
-        <button class="btn" id="btnHist">Histórico</button>
-      </div>
-    </div>
-
-    <!-- =======================
-         HOME
-    ======================== -->
-    <div id="screenHome" class="page active">
-      <div class="row">
-        <!-- CARD PRINCIPAL -->
-        <div class="card grow">
-          <h3 id="homeTitle">Selecionar setor</h3>
-          <p class="muted" id="homeDesc">
-            Escolha o setor para inserir dados, calcular indicadores e receber recomendações operacionais.
-          </p>
-
-          <div class="hr"></div>
-
-          <div class="grid">
-            <button class="btn btnPrimary" id="goMin">🌱 Minijardim</button>
-            <button class="btn btnPrimary" id="goInv">🌿 Invernadero</button>
-            <button class="btn" id="goSOP">📄 SOP Operacional</button>
-          </div>
-
-          <p class="muted" style="margin-top:10px">
-            Os registros ficam salvos localmente neste dispositivo e podem ser exportados para Excel (CSV).
-          </p>
-        </div>
-
-        <!-- CARD INFORMATIVO -->
-        <div class="card half">
-          <h3 id="homeInfoTitle">Princípios de manejo</h3>
-          <p class="muted" id="homeInfoText">
-            Ordem correta de controle ambiental:
-            <b>ventilação</b> → <b>sombreamento</b> → <b>água (apenas emergência)</b>.
-            Evite decisões impulsivas e sempre registre a ação.
-          </p>
-        </div>
-      </div>
-    </div>
-
-    <!-- =======================
-         MINIJARDIM
-    ======================== -->
-    <div id="screenMin" class="page">
-      <div class="row">
-        <!-- MINIJARDIM: DADOS -->
-        <div class="card half">
-          <h3 id="minTitle">🌱 Minijardim — Dados</h3>
-          <p class="muted" id="minHelp">
-            Preencha as leituras e use “Calcular” para receber recomendações. Para registrar, complete o checklist.
-          </p>
-
-          <div class="hr"></div>
-
-          <label id="lblOperator">Operador</label>
-          <select id="minOperator">
-            <option value="">—</option>
-            <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
-          </select>
-
-          <label id="lblShift">Turno</label>
-          <select id="minShift">
-            <option value="">—</option>
-            <option>Manhã</option><option>Tarde</option><option>Noite</option>
-          </select>
-
-          <label id="lblPoint">Ponto</label>
-          <select id="minPoint">
-            <option value="">—</option>
-            <option>A1</option><option>A2</option><option>A3</option>
-            <option>B1</option><option>B2</option><option>B3</option>
-          </select>
-
-          <div class="hr"></div>
-
-          <label id="lblT">Temperatura do ar (°C)</label>
-          <input id="minT" type="number" step="0.1" placeholder="Ex: 31.5" />
-
-          <label id="lblRH">Umidade relativa (%)</label>
-          <input id="minRH" type="number" step="1" placeholder="Ex: 22" />
-
-          <label id="lblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-          <input id="minPAR" type="number" step="1" placeholder="Ex: 1050" />
-
-          <label id="lblObs">Observação (lista)</label>
-          <select id="minObs">
-            <option value="">—</option>
-            <option>Ambiente pesado (pouca troca de ar)</option>
-            <option>Folha mole / murcha</option>
-            <option>Folha dura / estresse aparente</option>
-            <option>Substrato seco / bandeja seca</option>
-            <option>Substrato encharcado / risco sanitário</option>
-            <option>Charcos no piso</option>
-            <option>Outros</option>
-          </select>
-
-          <div class="row" style="margin-top:12px;justify-content:space-between">
-            <button class="btn btnPrimary" id="minCalc">Calcular</button>
-            <button class="btn" id="minBack">Voltar</button>
-          </div>
-
-          <p class="muted" style="margin-top:10px" id="minTip">
-            Dica: medir na altura do dossel e usar o pior ponto como referência operacional.
-          </p>
-        </div>
-
-        <!-- MINIJARDIM: RESULTADO / AÇÕES -->
-        <div class="card half">
-          <h3 id="minOutTitle">Minijardim — Resultado</h3>
-
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-            <div>
-              <div class="muted" id="minVpdLbl">VPD (kPa)</div>
-              <div class="big" id="minVPD">—</div>
-            </div>
-            <div><div class="badge ok" id="minBadge">—</div></div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h3 style="margin:0 0 8px 0" id="minRecTitle">Recomendação operacional</h3>
-          <div class="card" style="box-shadow:none;border-radius:14px" id="minRecipeBox">
-            <div class="muted" id="minRecipe">Preencha os dados e clique em “Calcular”.</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h3 style="margin:0 0 8px 0" id="minChecklistTitle">Checklist obrigatório</h3>
-          <div class="card" style="box-shadow:none;border-radius:14px">
-            <label><input type="checkbox" id="minChkCen" /> <span id="minChkCenTxt">Cenital ajustada conforme recomendação</span></label>
-            <label><input type="checkbox" id="minChkLat" /> <span id="minChkLatTxt">Laterais ajustadas conforme recomendação</span></label>
-            <label><input type="checkbox" id="minChkMalla" /> <span id="minChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-            <label><input type="checkbox" id="minChkFloor" /> <span id="minChkFloorTxt">Piso: sem charcos / manejo correto</span></label>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="pill" id="minTimerPill">Rechecagem: —</div>
-
-          <div class="row" style="margin-top:12px;justify-content:space-between">
-            <button class="btn btnPrimary" id="minSave" disabled>Registrar ação</button>
-            <button class="btn btnDanger" id="minReset">Limpar</button>
-          </div>
-
-          <p class="muted" style="margin-top:10px" id="minAuditHint">
-            Registro só libera após cálculo + checklist completo (reduz erro operacional).
-          </p>
-        </div>
-      </div>
-    </div>
-
-       <!-- =======================
-         INVERNADERO
-    ======================== -->
-    <div id="screenInv" class="page">
+  <!-- =======================
+       INVERNADERO
+  ======================== -->
+  <div id="screenInv" class="page">
+    <div class="pageInner">
       <div class="row">
 
         <!-- INVERNADERO: DADOS -->
@@ -468,13 +299,16 @@
             Registro só libera após cálculo + checklist completo.
           </p>
         </div>
+
       </div>
     </div>
+  </div>
 
-    <!-- =======================
-         HISTÓRICO
-    ======================== -->
-    <div id="screenHist" class="page">
+  <!-- =======================
+       HISTÓRICO
+  ======================== -->
+  <div id="screenHist" class="page">
+    <div class="pageInner">
       <div class="row">
         <div class="card grow">
           <h3 id="histTitle">Histórico</h3>
@@ -520,14 +354,18 @@
         </div>
       </div>
     </div>
-
-    <!-- =======================
-         SOP (conteúdo vem via JS)
-    ======================== -->
-    <div id="screenSOP" class="page"></div>
-
   </div>
-  <!-- FIM .wrap app -->
+
+  <!-- =======================
+       SOP (conteúdo vem via JS)
+  ======================== -->
+  <div id="screenSOP" class="page">
+    <div class="pageInner"></div>
+  </div>
+
+</div>
+<!-- FIM .stage -->
+
 
 
     </div>
