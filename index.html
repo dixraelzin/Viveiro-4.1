@@ -887,8 +887,9 @@
       localStorage.removeItem(KEY);
       renderHist();
     }
-  }
+  };
     // --- TEMA ESCURO / CLARO ---
+  
 function setTheme(dark) {
   document.documentElement.classList.toggle("dark", dark);
   localStorage.setItem("vivero_theme", dark ? "dark" : "light");
@@ -905,7 +906,7 @@ $("btnTheme").onclick = toggleTheme;
 // Ativar tema salvo ao carregar
 const savedTheme = localStorage.getItem("vivero_theme");
 setTheme(savedTheme === "dark");
-
+   }
   };
 
   // Inicial
