@@ -150,11 +150,37 @@
       .grid{grid-template-columns:repeat(1,minmax(0,1fr))}
       .wrap{padding:14px}
     }
+    /* ===== Navegação por páginas ===== */
+.page{
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  padding: 18px;
+  background: transparent;
+
+  opacity: 0;
+  transform: translateX(20px);
+  pointer-events: none;
+  transition: all .35s ease;
+}
+
+.page.active{
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+.app{
+  position: relative;
+  min-height: 100vh;
+  overflow: hidden;
+}
+
   </style>
 </head>
 <body>
 
-<div class="wrap">
+<div class="wrap app">
 
   <!-- HEADER -->
   <div class="top">
@@ -185,23 +211,23 @@
   </div>
 
   <!-- TELAS -->
-  <div id="screenHome" class="row">
+  <div id="screenHome" class="page active">
     <!-- Conteúdo entra na Parte 3 -->
   </div>
 
-  <div id="screenMin" class="row hide">
+  <div id="screenMin" class="page">
     <!-- Conteúdo entra na Parte 4 -->
   </div>
 
-  <div id="screenInv" class="row hide">
+  <div id="screenInv" class="page">
     <!-- Conteúdo entra na Parte 5 -->
   </div>
 
-  <div id="screenHist" class="row hide">
+  <div id="screenHist" class="page">
     <!-- Conteúdo entra na Parte 6 -->
   </div>
 
-  <div id="screenSOP" class="row hide">
+  <div id="screenSOP" class="page">
     <!-- Conteúdo entra na Parte 12 -->
   </div>
 
@@ -655,11 +681,17 @@
   // =========================
   // Navigation
   // =========================
-  function showScreen(screenId){
-    ["screenHome","screenMin","screenInv","screenHist","screenSOP"].forEach(id=>{
-      $(id).classList.toggle("hide", id !== screenId);
-    });
+  function showScreen(id){
+  document.querySelectorAll(".page").forEach(p=>{
+    p.classList.remove("active");
+  });
+
+  const page = document.getElementById(id);
+  if (page){
+    page.classList.add("active");
   }
+}
+
 
   // =========================
   // Wiring basic UI events
