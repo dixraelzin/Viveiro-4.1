@@ -179,59 +179,48 @@
   </style>
 </head>
 <body>
+  <div class="wrap app">
 
-<div class="wrap app">
+    <!-- HEADER (fica sempre) -->
+    <div class="top">
+      ... seu header inteiro aqui ...
+    </div>
 
-  <!-- HEADER -->
-  <div class="top">
-    <div class="brand">
-      <div class="logo" aria-hidden="true"></div>
-      <div>
-        <div class="title" id="appTitle">App Vivero PRO</div>
-        <div class="subtitle" id="appSubtitle">
-          Minijardim & Invernadero · Operação segura
-        </div>
+    <!-- HOME -->
+    <div id="screenHome" class="page active">
+      <div class="row">
+        <!-- cole AQUI os 2 cards do HOME -->
       </div>
     </div>
 
-    <div class="right">
-      <!-- Idioma -->
-      <select id="langSelect" class="pill">
-        <option value="pt">🇧🇷 PT</option>
-        <option value="es">🇪🇸 ES</option>
-      </select>
-
-      <!-- Relógio -->
-      <span class="pill" id="clock">—</span>
-
-      <!-- Navegação -->
-      <button class="btn btnGhost" id="btnHome">Home</button>
-      <button class="btn" id="btnHist">Histórico</button>
+    <!-- MINIJARDIM -->
+    <div id="screenMin" class="page">
+      <div class="row">
+        <!-- cole AQUI os 2 cards do Minijardim (Dados + Resultado) -->
+      </div>
     </div>
+
+    <!-- INVERNADERO -->
+    <div id="screenInv" class="page">
+      <div class="row">
+        <!-- cole AQUI os 2 cards do Invernadero (Dados + Resultado) -->
+      </div>
+    </div>
+
+    <!-- HISTÓRICO -->
+    <div id="screenHist" class="page">
+      <div class="row">
+        <!-- cole AQUI o card do Histórico -->
+      </div>
+    </div>
+
+    <!-- SOP -->
+    <div id="screenSOP" class="page">
+      <!-- pode ficar vazio: renderSOP() injeta aqui -->
+    </div>
+
   </div>
 
-  <!-- TELAS -->
-  <div id="screenHome" class="page active">
-    <!-- Conteúdo entra na Parte 3 -->
-  </div>
-
-  <div id="screenMin" class="page">
-    <!-- Conteúdo entra na Parte 4 -->
-  </div>
-
-  <div id="screenInv" class="page">
-    <!-- Conteúdo entra na Parte 5 -->
-  </div>
-
-  <div id="screenHist" class="page">
-    <!-- Conteúdo entra na Parte 6 -->
-  </div>
-
-  <div id="screenSOP" class="page">
-    <!-- Conteúdo entra na Parte 12 -->
-  </div>
-
-</div>
 <!-- CARD PRINCIPAL -->
 <div class="card grow">
   <h3 id="homeTitle">Selecionar setor</h3>
