@@ -33,6 +33,24 @@
       --line:#d7def5;
       --btn:#edf2ff;
     }
+    :root.dark {
+  --bg: #0d1117;
+  --card: #161b22;
+  --card2: #0f141b;
+  --text: #f0f6fc;
+  --muted: #8b949e;
+
+  --accent: #2563eb;
+  --accent2: #60a5fa;
+
+  --ok: #38bdf8;
+  --warn: #facc15;
+  --bad: #f87171;
+
+  --line: #30363d;
+  --btn: #21262d;
+}
+
 
     *{box-sizing:border-box}
     body{
@@ -167,6 +185,8 @@
       <span class="pill" id="nowPill">—</span>
       <button class="btn btnGhost" id="btnHome">Inicio</button>
       <button class="btn" id="btnHist">Historial</button>
+      <button class="btn" id="btnTheme">🌙</button>
+
     </div>
   </div>
 
@@ -867,6 +887,25 @@
       localStorage.removeItem(KEY);
       renderHist();
     }
+  }
+    // --- TEMA ESCURO / CLARO ---
+function setTheme(dark) {
+  document.documentElement.classList.toggle("dark", dark);
+  localStorage.setItem("vivero_theme", dark ? "dark" : "light");
+  $("btnTheme").textContent = dark ? "☀️" : "🌙";
+}
+
+function toggleTheme() {
+  const isDark = document.documentElement.classList.contains("dark");
+  setTheme(!isDark);
+}
+
+$("btnTheme").onclick = toggleTheme;
+
+// Ativar tema salvo ao carregar
+const savedTheme = localStorage.getItem("vivero_theme");
+setTheme(savedTheme === "dark");
+
   };
 
   // Inicial
