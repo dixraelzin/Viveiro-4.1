@@ -7,7 +7,6 @@
 
   <style>
     :root{
-      /* Light + Blue professional */
       --bg:#f6f8ff;
       --card:#ffffff;
       --card2:#f3f6ff;
@@ -126,6 +125,7 @@
       color:var(--muted);
       font-size:12px;
       font-weight:700;
+      white-space:nowrap;
     }
 
     /* Badges */
@@ -142,6 +142,8 @@
     .warn{background:rgba(245,158,11,.12); color:var(--warn); border-color:rgba(245,158,11,.25)}
     .bad{background:rgba(239,68,68,.10); color:var(--bad); border-color:rgba(239,68,68,.25)}
 
+    .big{font-size:40px;font-weight:900;letter-spacing:.2px;line-height:1}
+
     /* Utilities */
     .grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
     @media(max-width:900px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
@@ -150,7 +152,14 @@
       .wrap{padding:14px}
     }
 
-    /* ===== Navegação por páginas ===== */
+    /* ===== Páginas ===== */
+    .app{position:relative;min-height:100vh}
+    .stage{
+      position:relative;
+      height:calc(100vh - 110px);
+      overflow:hidden;
+      border-radius:18px;
+    }
     .page{
       position:absolute;
       inset:0;
@@ -158,551 +167,387 @@
       padding:18px;
       background:transparent;
       opacity:0;
-      transform:translateX(20px);
+      transform:translateX(16px);
       pointer-events:none;
-      transition:all .35s ease;
+      transition:all .22s ease;
     }
     .page.active{
       opacity:1;
       transform:translateX(0);
       pointer-events:auto;
     }
-    .app{
-      position:relative;
-      min-height:100vh;
-      overflow:hidden;
-    }
+    .pageInner{max-width:1200px;margin:0 auto;}
   </style>
 </head>
 
 <body>
- <!-- ÁREA DAS TELAS (stage) -->
-<div class="stage">
+  <div class="wrap app">
 
-  <!-- =======================
-       INVERNADERO
-  ======================== -->
-  <div id="screenInv" class="page">
-    <div class="pageInner">
-      <div class="row">
-
-        <!-- INVERNADERO: DADOS -->
-        <div class="card half">
-          <h3 id="invTitle">🌿 Invernadero — Dados</h3>
-          <p class="muted" id="invHelp">
-            Selecione a fase (M1/M2/M3), insira leituras e calcule. Para registrar, complete o checklist.
-          </p>
-
-          <div class="hr"></div>
-
-          <label id="invLblOperator">Operador</label>
-          <select id="invOperator">
-            <option value="">—</option>
-            <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
-          </select>
-
-          <label id="invLblShift">Turno</label>
-          <select id="invShift">
-            <option value="">—</option>
-            <option>Manhã</option><option>Tarde</option><option>Noite</option>
-          </select>
-
-          <label id="invLblPoint">Ponto</label>
-          <select id="invPoint">
-            <option value="">—</option>
-            <option>M1-A1</option><option>M1-A2</option><option>M1-B1</option>
-            <option>M2-A1</option><option>M2-A2</option><option>M2-B1</option>
-            <option>M3-A1</option><option>M3-A2</option><option>M3-B1</option>
-          </select>
-
-          <div class="hr"></div>
-
-          <label id="invLblPhase">Fase</label>
-          <select id="invPhase">
-            <option value="M1">M1</option>
-            <option value="M2">M2</option>
-            <option value="M3">M3</option>
-          </select>
-
-          <label id="invLblT">Temperatura do ar (°C)</label>
-          <input id="invT" type="number" step="0.1" placeholder="Ex: 28.0" />
-
-          <label id="invLblRH">Umidade relativa (%)</label>
-          <input id="invRH" type="number" step="1" placeholder="Ex: 70" />
-
-          <label id="invLblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-          <input id="invPAR" type="number" step="1" placeholder="Ex: 350" />
-
-          <label id="invLblObs">Observação (lista)</label>
-          <select id="invObs">
-            <option value="">—</option>
-            <option>Ambiente pesado (pouca troca de ar)</option>
-            <option>Folha molhada / risco de fungo</option>
-            <option>Substrato seco / bandeja seca</option>
-            <option>Substrato encharcado</option>
-            <option>Uniformidade ruim (diferença entre bancadas)</option>
-            <option>Charcos no piso</option>
-            <option>Outros</option>
-          </select>
-
-          <div class="row" style="margin-top:12px;justify-content:space-between">
-            <button class="btn btnPrimary" id="invCalc">Calcular</button>
-            <button class="btn" id="invBack">Voltar</button>
-          </div>
-
-          <p class="muted" style="margin-top:10px" id="invTip">
-            Dica: use o pior ponto da fase como referência (evita subestimar estresse).
-          </p>
-        </div>
-
-        <!-- INVERNADERO: RESULTADO -->
-        <div class="card half">
-          <h3 id="invOutTitle">Invernadero — Resultado</h3>
-
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-            <div>
-              <div class="muted" id="invVpdLbl">VPD (kPa)</div>
-              <div class="big" id="invVPD">—</div>
-            </div>
-            <div>
-              <div class="badge ok" id="invBadge">—</div>
-            </div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h3 style="margin:0 0 8px 0" id="invRecTitle">Recomendação por fase</h3>
-          <div class="card" style="box-shadow:none;border-radius:14px" id="invRecipeBox">
-            <div class="muted" id="invRecipe">Preencha os dados e clique em “Calcular”.</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <h3 style="margin:0 0 8px 0" id="invChecklistTitle">Checklist obrigatório</h3>
-          <div class="card" style="box-shadow:none;border-radius:14px">
-            <label><input type="checkbox" id="invChkVent" /> <span id="invChkVentTxt">Ventilação ajustada (cenital/laterais)</span></label>
-            <label><input type="checkbox" id="invChkMalla" /> <span id="invChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-            <label><input type="checkbox" id="invChkFog" /> <span id="invChkFogTxt">Nebulização (Sim/Não) conferida</span></label>
-            <label><input type="checkbox" id="invChkFloor" /> <span id="invChkFloorTxt">Piso sem charcos / manejo correto</span></label>
-          </div>
-
-          <div class="hr"></div>
-
-          <div class="pill" id="invTimerPill">Rechecagem: —</div>
-
-          <div class="row" style="margin-top:12px;justify-content:space-between">
-            <button class="btn btnPrimary" id="invSave" disabled>Registrar ação</button>
-            <button class="btn btnDanger" id="invReset">Limpar</button>
-          </div>
-
-          <p class="muted" style="margin-top:10px" id="invAuditHint">
-            Registro só libera após cálculo + checklist completo.
-          </p>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- =======================
-       HISTÓRICO
-  ======================== -->
-  <div id="screenHist" class="page">
-    <div class="pageInner">
-      <div class="row">
-        <div class="card grow">
-          <h3 id="histTitle">Histórico</h3>
-          <p class="muted" id="histDesc">
-            Registros ficam salvos neste dispositivo (LocalStorage). Exporte para Excel (CSV).
-          </p>
-
-          <div class="hr"></div>
-
-          <div class="row" style="justify-content:space-between;align-items:center">
-            <div class="row">
-              <button class="btn" id="histExport">Exportar CSV</button>
-              <button class="btn btnDanger" id="histClear">Limpar histórico</button>
-            </div>
-            <div class="pill" id="histCount">0 registros</div>
-          </div>
-
-          <div class="hr"></div>
-
-          <div style="overflow:auto">
-            <table style="width:100%;border-collapse:collapse">
-              <thead>
-                <tr>
-                  <th>Data/Hora</th>
-                  <th>Setor</th>
-                  <th>Fase</th>
-                  <th>Operador</th>
-                  <th>Turno</th>
-                  <th>Ponto</th>
-                  <th>T (°C)</th>
-                  <th>UR (%)</th>
-                  <th>PAR</th>
-                  <th>VPD</th>
-                  <th>Ações / Obs</th>
-                </tr>
-              </thead>
-              <tbody id="histBody"></tbody>
-            </table>
-          </div>
-
-          <div class="hr"></div>
-          <button class="btn" id="histBack">Voltar</button>
+    <!-- HEADER -->
+    <div class="top">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div class="title" id="appTitle">App Vivero PRO</div>
+          <div class="subtitle" id="appSubtitle">Minijardim & Invernadero · Operação segura</div>
         </div>
       </div>
-    </div>
-  </div>
 
-  <!-- =======================
-       SOP (conteúdo vem via JS)
-  ======================== -->
-  <div id="screenSOP" class="page">
-    <div class="pageInner"></div>
-  </div>
+      <div class="right">
+        <select id="langSelect" class="pill" aria-label="Idioma">
+          <option value="pt">🇧🇷 PT</option>
+          <option value="es">🇪🇸 ES</option>
+        </select>
 
-</div>
-<!-- FIM .stage -->
+        <span class="pill" id="clock">—</span>
 
-
-
-    </div>
-
-    <!-- INVERNADERO -->
-    <div id="screenInv" class="page">
-      <div class="row">
-        <!-- cole AQUI os 2 cards do Invernadero (Dados + Resultado) -->
+        <button class="btn btnGhost" id="btnHome">Home</button>
+        <button class="btn" id="btnHist">Histórico</button>
       </div>
     </div>
 
-    <!-- HISTÓRICO -->
-    <div id="screenHist" class="page">
-      <div class="row">
-        <!-- cole AQUI o card do Histórico -->
+    <!-- TELAS -->
+    <div class="stage">
+
+      <!-- HOME -->
+      <div id="screenHome" class="page active">
+        <div class="pageInner">
+          <div class="row">
+
+            <!-- CARD PRINCIPAL -->
+            <div class="card grow">
+              <h3 id="homeTitle">Selecionar setor</h3>
+              <p class="muted" id="homeDesc">
+                Escolha o setor para inserir dados, calcular indicadores e receber recomendações operacionais.
+              </p>
+
+              <div class="hr"></div>
+
+              <div class="grid">
+                <button class="btn btnPrimary" id="goMin">🌱 Minijardim</button>
+                <button class="btn btnPrimary" id="goInv">🌿 Invernadero</button>
+                <button class="btn" id="goSOP">📄 SOP Operacional</button>
+              </div>
+
+              <p class="muted" style="margin-top:10px">
+                Os registros ficam salvos localmente neste dispositivo e podem ser exportados para Excel (CSV).
+              </p>
+            </div>
+
+            <!-- CARD INFORMATIVO -->
+            <div class="card half">
+              <h3 id="homeInfoTitle">Princípios de manejo</h3>
+              <p class="muted" id="homeInfoText">
+                Ordem correta de controle ambiental:
+                <b>ventilação</b> → <b>sombreamento</b> → <b>água (apenas emergência)</b>.
+                Evite decisões impulsivas e sempre registre a ação.
+              </p>
+            </div>
+
+          </div>
+        </div>
       </div>
+
+      <!-- MINIJARDIM -->
+      <div id="screenMin" class="page">
+        <div class="pageInner">
+          <div class="row">
+
+            <!-- MINIJARDIM: DADOS -->
+            <div class="card half">
+              <h3 id="minTitle">🌱 Minijardim — Dados</h3>
+              <p class="muted" id="minHelp">
+                Preencha as leituras e use “Calcular” para receber recomendações. Para registrar, complete o checklist.
+              </p>
+
+              <div class="hr"></div>
+
+              <label id="lblOperator">Operador</label>
+              <select id="minOperator">
+                <option value="">—</option>
+                <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
+              </select>
+
+              <label id="lblShift">Turno</label>
+              <select id="minShift">
+                <option value="">—</option>
+                <option>Manhã</option><option>Tarde</option><option>Noite</option>
+              </select>
+
+              <label id="lblPoint">Ponto</label>
+              <select id="minPoint">
+                <option value="">—</option>
+                <option>A1</option><option>A2</option><option>A3</option>
+                <option>B1</option><option>B2</option><option>B3</option>
+              </select>
+
+              <div class="hr"></div>
+
+              <label id="lblT">Temperatura do ar (°C)</label>
+              <input id="minT" type="number" step="0.1" placeholder="Ex: 31.5" />
+
+              <label id="lblRH">Umidade relativa (%)</label>
+              <input id="minRH" type="number" step="1" placeholder="Ex: 22" />
+
+              <label id="lblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
+              <input id="minPAR" type="number" step="1" placeholder="Ex: 1050" />
+
+              <label id="lblObs">Observação (lista)</label>
+              <select id="minObs">
+                <option value="">—</option>
+                <option>Ambiente pesado (pouca troca de ar)</option>
+                <option>Folha mole / murcha</option>
+                <option>Folha dura / estresse aparente</option>
+                <option>Substrato seco / bandeja seca</option>
+                <option>Substrato encharcado / risco sanitário</option>
+                <option>Charcos no piso</option>
+                <option>Outros</option>
+              </select>
+
+              <div class="row" style="margin-top:12px;justify-content:space-between">
+                <button class="btn btnPrimary" id="minCalc">Calcular</button>
+                <button class="btn" id="minBack">Voltar</button>
+              </div>
+
+              <p class="muted" style="margin-top:10px" id="minTip">
+                Dica: medir na altura do dossel e usar o pior ponto como referência operacional.
+              </p>
+            </div>
+
+            <!-- MINIJARDIM: RESULTADO -->
+            <div class="card half">
+              <h3 id="minOutTitle">Minijardim — Resultado</h3>
+
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+                <div>
+                  <div class="muted" id="minVpdLbl">VPD (kPa)</div>
+                  <div class="big" id="minVPD">—</div>
+                </div>
+                <div>
+                  <div class="badge ok" id="minBadge">—</div>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 8px 0" id="minRecTitle">Recomendação operacional</h3>
+              <div class="card" style="box-shadow:none;border-radius:14px" id="minRecipeBox">
+                <div class="muted" id="minRecipe">Preencha os dados e clique em “Calcular”.</div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 8px 0" id="minChecklistTitle">Checklist obrigatório</h3>
+              <div class="card" style="box-shadow:none;border-radius:14px">
+                <label><input type="checkbox" id="minChkCen" /> <span id="minChkCenTxt">Cenital ajustada conforme recomendação</span></label>
+                <label><input type="checkbox" id="minChkLat" /> <span id="minChkLatTxt">Laterais ajustadas conforme recomendação</span></label>
+                <label><input type="checkbox" id="minChkMalla" /> <span id="minChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
+                <label><input type="checkbox" id="minChkFloor" /> <span id="minChkFloorTxt">Piso: sem charcos / manejo correto</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="pill" id="minTimerPill">Rechecagem: —</div>
+
+              <div class="row" style="margin-top:12px;justify-content:space-between">
+                <button class="btn btnPrimary" id="minSave" disabled>Registrar ação</button>
+                <button class="btn btnDanger" id="minReset">Limpar</button>
+              </div>
+
+              <p class="muted" style="margin-top:10px" id="minAuditHint">
+                Registro só libera após cálculo + checklist completo (reduz erro operacional).
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- INVERNADERO -->
+      <div id="screenInv" class="page">
+        <div class="pageInner">
+          <div class="row">
+
+            <!-- INVERNADERO: DADOS -->
+            <div class="card half">
+              <h3 id="invTitle">🌿 Invernadero — Dados</h3>
+              <p class="muted" id="invHelp">
+                Selecione a fase (M1/M2/M3), insira leituras e calcule. Para registrar, complete o checklist.
+              </p>
+
+              <div class="hr"></div>
+
+              <label id="invLblOperator">Operador</label>
+              <select id="invOperator">
+                <option value="">—</option>
+                <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
+              </select>
+
+              <label id="invLblShift">Turno</label>
+              <select id="invShift">
+                <option value="">—</option>
+                <option>Manhã</option><option>Tarde</option><option>Noite</option>
+              </select>
+
+              <label id="invLblPoint">Ponto</label>
+              <select id="invPoint">
+                <option value="">—</option>
+                <option>M1-A1</option><option>M1-A2</option><option>M1-B1</option>
+                <option>M2-A1</option><option>M2-A2</option><option>M2-B1</option>
+                <option>M3-A1</option><option>M3-A2</option><option>M3-B1</option>
+              </select>
+
+              <div class="hr"></div>
+
+              <label id="invLblPhase">Fase</label>
+              <select id="invPhase">
+                <option value="M1">M1</option>
+                <option value="M2">M2</option>
+                <option value="M3">M3</option>
+              </select>
+
+              <label id="invLblT">Temperatura do ar (°C)</label>
+              <input id="invT" type="number" step="0.1" placeholder="Ex: 28.0" />
+
+              <label id="invLblRH">Umidade relativa (%)</label>
+              <input id="invRH" type="number" step="1" placeholder="Ex: 70" />
+
+              <label id="invLblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
+              <input id="invPAR" type="number" step="1" placeholder="Ex: 350" />
+
+              <label id="invLblObs">Observação (lista)</label>
+              <select id="invObs">
+                <option value="">—</option>
+                <option>Ambiente pesado (pouca troca de ar)</option>
+                <option>Folha molhada / risco de fungo</option>
+                <option>Substrato seco / bandeja seca</option>
+                <option>Substrato encharcado</option>
+                <option>Uniformidade ruim (diferença entre bancadas)</option>
+                <option>Charcos no piso</option>
+                <option>Outros</option>
+              </select>
+
+              <div class="row" style="margin-top:12px;justify-content:space-between">
+                <button class="btn btnPrimary" id="invCalc">Calcular</button>
+                <button class="btn" id="invBack">Voltar</button>
+              </div>
+
+              <p class="muted" style="margin-top:10px" id="invTip">
+                Dica: use o pior ponto da fase como referência (evita subestimar estresse).
+              </p>
+            </div>
+
+            <!-- INVERNADERO: RESULTADO -->
+            <div class="card half">
+              <h3 id="invOutTitle">Invernadero — Resultado</h3>
+
+              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+                <div>
+                  <div class="muted" id="invVpdLbl">VPD (kPa)</div>
+                  <div class="big" id="invVPD">—</div>
+                </div>
+                <div>
+                  <div class="badge ok" id="invBadge">—</div>
+                </div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 8px 0" id="invRecTitle">Recomendação por fase</h3>
+              <div class="card" style="box-shadow:none;border-radius:14px" id="invRecipeBox">
+                <div class="muted" id="invRecipe">Preencha os dados e clique em “Calcular”.</div>
+              </div>
+
+              <div class="hr"></div>
+
+              <h3 style="margin:0 0 8px 0" id="invChecklistTitle">Checklist obrigatório</h3>
+              <div class="card" style="box-shadow:none;border-radius:14px">
+                <label><input type="checkbox" id="invChkVent" /> <span id="invChkVentTxt">Ventilação ajustada (cenital/laterais)</span></label>
+                <label><input type="checkbox" id="invChkMalla" /> <span id="invChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
+                <label><input type="checkbox" id="invChkFog" /> <span id="invChkFogTxt">Nebulização (Sim/Não) conferida</span></label>
+                <label><input type="checkbox" id="invChkFloor" /> <span id="invChkFloorTxt">Piso sem charcos / manejo correto</span></label>
+              </div>
+
+              <div class="hr"></div>
+
+              <div class="pill" id="invTimerPill">Rechecagem: —</div>
+
+              <div class="row" style="margin-top:12px;justify-content:space-between">
+                <button class="btn btnPrimary" id="invSave" disabled>Registrar ação</button>
+                <button class="btn btnDanger" id="invReset">Limpar</button>
+              </div>
+
+              <p class="muted" style="margin-top:10px" id="invAuditHint">
+                Registro só libera após cálculo + checklist completo.
+              </p>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- HISTÓRICO -->
+      <div id="screenHist" class="page">
+        <div class="pageInner">
+          <div class="row">
+            <div class="card grow">
+              <h3 id="histTitle">Histórico</h3>
+              <p class="muted" id="histDesc">
+                Registros ficam salvos neste dispositivo (LocalStorage). Exporte para Excel (CSV).
+              </p>
+
+              <div class="hr"></div>
+
+              <div class="row" style="justify-content:space-between;align-items:center">
+                <div class="row">
+                  <button class="btn" id="histExport">Exportar CSV</button>
+                  <button class="btn btnDanger" id="histClear">Limpar histórico</button>
+                </div>
+                <div class="pill" id="histCount">0 registros</div>
+              </div>
+
+              <div class="hr"></div>
+
+              <div style="overflow:auto">
+                <table style="width:100%;border-collapse:collapse">
+                  <thead>
+                    <tr>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Data/Hora</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Setor</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Fase</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Operador</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Turno</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ponto</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">T (°C)</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">UR (%)</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">PAR</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">VPD</th>
+                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ações/Obs</th>
+                    </tr>
+                  </thead>
+                  <tbody id="histBody"></tbody>
+                </table>
+              </div>
+
+              <p class="muted" style="margin-top:10px" id="histNote">
+                Para auditoria, cada registro guarda leituras + ações + observação escolhida.
+              </p>
+
+              <div class="hr"></div>
+              <button class="btn" id="histBack">Voltar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- SOP -->
+      <div id="screenSOP" class="page">
+        <div class="pageInner" id="sopContainer"></div>
+      </div>
+
     </div>
-
-    <!-- SOP -->
-    <div id="screenSOP" class="page">
-      <!-- pode ficar vazio: renderSOP() injeta aqui -->
-    </div>
-
   </div>
 
-<!-- CARD PRINCIPAL -->
-<div class="card grow">
-  <h3 id="homeTitle">Selecionar setor</h3>
-  <p class="muted" id="homeDesc">
-    Escolha o setor para inserir dados, calcular indicadores e receber recomendações operacionais.
-  </p>
-
-  <div class="hr"></div>
-
-  <div class="grid">
-    <button class="btn btnPrimary" id="goMin">
-      🌱 Minijardim
-    </button>
-
-    <button class="btn btnPrimary" id="goInv">
-      🌿 Invernadero
-    </button>
-
-    <button class="btn" id="goSOP">
-      📄 SOP Operacional
-    </button>
-  </div>
-
-  <p class="muted" style="margin-top:10px">
-    Os registros ficam salvos localmente neste dispositivo e podem ser exportados para Excel (CSV).
-  </p>
-</div>
-
-<!-- CARD INFORMATIVO -->
-<div class="card half">
-  <h3 id="homeInfoTitle">Princípios de manejo</h3>
-
-  <p class="muted" id="homeInfoText">
-    Ordem correta de controle ambiental: 
-    <b>ventilação</b> → <b>sombreamento</b> → <b>água (apenas emergência)</b>.
-    Evite decisões impulsivas e sempre registre a ação.
-  </p>
-</div>
-<!-- MINIJARDIM: DADOS -->
-<div class="card half">
-  <h3 id="minTitle">🌱 Minijardim — Dados</h3>
-  <p class="muted" id="minHelp">
-    Preencha as leituras e use “Calcular” para receber recomendações. Para registrar, complete o checklist.
-  </p>
-
-  <div class="hr"></div>
-
-  <label id="lblOperator">Operador</label>
-  <select id="minOperator">
-    <option value="">—</option>
-    <option>Ana</option>
-    <option>Bruno</option>
-    <option>Carla</option>
-    <option>Diego</option>
-  </select>
-
-  <label id="lblShift">Turno</label>
-  <select id="minShift">
-    <option value="">—</option>
-    <option>Manhã</option>
-    <option>Tarde</option>
-    <option>Noite</option>
-  </select>
-
-  <label id="lblPoint">Ponto</label>
-  <select id="minPoint">
-    <option value="">—</option>
-    <option>A1</option><option>A2</option><option>A3</option>
-    <option>B1</option><option>B2</option><option>B3</option>
-  </select>
-
-  <div class="hr"></div>
-
-  <label id="lblT">Temperatura do ar (°C)</label>
-  <input id="minT" type="number" step="0.1" placeholder="Ex: 31.5" />
-
-  <label id="lblRH">Umidade relativa (%)</label>
-  <input id="minRH" type="number" step="1" placeholder="Ex: 22" />
-
-  <label id="lblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-  <input id="minPAR" type="number" step="1" placeholder="Ex: 1050" />
-
-  <label id="lblObs">Observação (lista)</label>
-  <select id="minObs">
-    <option value="">—</option>
-    <option>Ambiente pesado (pouca troca de ar)</option>
-    <option>Folha mole / murcha</option>
-    <option>Folha dura / estresse aparente</option>
-    <option>Substrato seco / bandeja seca</option>
-    <option>Substrato encharcado / risco sanitário</option>
-    <option>Charcos no piso</option>
-    <option>Outros</option>
-  </select>
-
-  <div class="row" style="margin-top:12px;justify-content:space-between">
-    <button class="btn btnPrimary" id="minCalc">Calcular</button>
-    <button class="btn" id="minBack">Voltar</button>
-  </div>
-
-  <p class="muted" style="margin-top:10px" id="minTip">
-    Dica: medir na altura do dossel e usar o pior ponto como referência operacional.
-  </p>
-</div>
-
-<!-- MINIJARDIM: RESULTADO / AÇÕES -->
-<div class="card half">
-  <h3 id="minOutTitle">Minijardim — Resultado</h3>
-
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-    <div>
-      <div class="muted" id="minVpdLbl">VPD (kPa)</div>
-      <div class="big" id="minVPD">—</div>
-    </div>
-    <div>
-      <div class="badge ok" id="minBadge">—</div>
-    </div>
-  </div>
-
-  <div class="hr"></div>
-
-  <h3 style="margin:0 0 8px 0" id="minRecTitle">Recomendação operacional</h3>
-  <div class="card" style="box-shadow:none;border-radius:14px" id="minRecipeBox">
-    <div class="muted" id="minRecipe">Preencha os dados e clique em “Calcular”.</div>
-  </div>
-
-  <div class="hr"></div>
-
-  <h3 style="margin:0 0 8px 0" id="minChecklistTitle">Checklist obrigatório</h3>
-  <div class="card" style="box-shadow:none;border-radius:14px">
-    <label><input type="checkbox" id="minChkCen" /> <span id="minChkCenTxt">Cenital ajustada conforme recomendação</span></label>
-    <label><input type="checkbox" id="minChkLat" /> <span id="minChkLatTxt">Laterais ajustadas conforme recomendação</span></label>
-    <label><input type="checkbox" id="minChkMalla" /> <span id="minChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-    <label><input type="checkbox" id="minChkFloor" /> <span id="minChkFloorTxt">Piso: sem charcos / manejo correto</span></label>
-  </div>
-
-  <div class="hr"></div>
-
-  <div class="pill" id="minTimerPill">Rechecagem: —</div>
-
-  <div class="row" style="margin-top:12px;justify-content:space-between">
-    <button class="btn btnPrimary" id="minSave" disabled>Registrar ação</button>
-    <button class="btn btnDanger" id="minReset">Limpar</button>
-  </div>
-
-  <p class="muted" style="margin-top:10px" id="minAuditHint">
-    Registro só libera após cálculo + checklist completo (reduz erro operacional).
-  </p>
-</div>
-<!-- INVERNADERO: DADOS -->
-<div class="card half">
-  <h3 id="invTitle">🌿 Invernadero — Dados</h3>
-  <p class="muted" id="invHelp">
-    Selecione a fase (M1/M2/M3), insira leituras e calcule. Para registrar, complete o checklist.
-  </p>
-
-  <div class="hr"></div>
-
-  <label id="invLblOperator">Operador</label>
-  <select id="invOperator">
-    <option value="">—</option>
-    <option>Ana</option>
-    <option>Bruno</option>
-    <option>Carla</option>
-    <option>Diego</option>
-  </select>
-
-  <label id="invLblShift">Turno</label>
-  <select id="invShift">
-    <option value="">—</option>
-    <option>Manhã</option>
-    <option>Tarde</option>
-    <option>Noite</option>
-  </select>
-
-  <label id="invLblPoint">Ponto</label>
-  <select id="invPoint">
-    <option value="">—</option>
-    <option>M1-A1</option><option>M1-A2</option><option>M1-B1</option>
-    <option>M2-A1</option><option>M2-A2</option><option>M2-B1</option>
-    <option>M3-A1</option><option>M3-A2</option><option>M3-B1</option>
-  </select>
-
-  <div class="hr"></div>
-
-  <label id="invLblPhase">Fase</label>
-  <select id="invPhase">
-    <option value="M1">M1</option>
-    <option value="M2">M2</option>
-    <option value="M3">M3</option>
-  </select>
-
-  <label id="invLblT">Temperatura do ar (°C)</label>
-  <input id="invT" type="number" step="0.1" placeholder="Ex: 28.0" />
-
-  <label id="invLblRH">Umidade relativa (%)</label>
-  <input id="invRH" type="number" step="1" placeholder="Ex: 70" />
-
-  <label id="invLblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-  <input id="invPAR" type="number" step="1" placeholder="Ex: 350" />
-
-  <label id="invLblObs">Observação (lista)</label>
-  <select id="invObs">
-    <option value="">—</option>
-    <option>Ambiente pesado (pouca troca de ar)</option>
-    <option>Folha molhada / risco de fungo</option>
-    <option>Substrato seco / bandeja seca</option>
-    <option>Substrato encharcado</option>
-    <option>Uniformidade ruim (diferença entre bancadas)</option>
-    <option>Charcos no piso</option>
-    <option>Outros</option>
-  </select>
-
-  <div class="row" style="margin-top:12px;justify-content:space-between">
-    <button class="btn btnPrimary" id="invCalc">Calcular</button>
-    <button class="btn" id="invBack">Voltar</button>
-  </div>
-
-  <p class="muted" style="margin-top:10px" id="invTip">
-    Dica: use o pior ponto da fase como referência (evita subestimar estresse).
-  </p>
-</div>
-
-<!-- INVERNADERO: RESULTADO / AÇÕES -->
-<div class="card half">
-  <h3 id="invOutTitle">Invernadero — Resultado</h3>
-
-  <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-    <div>
-      <div class="muted" id="invVpdLbl">VPD (kPa)</div>
-      <div class="big" id="invVPD">—</div>
-    </div>
-    <div>
-      <div class="badge ok" id="invBadge">—</div>
-    </div>
-  </div>
-
-  <div class="hr"></div>
-
-  <h3 style="margin:0 0 8px 0" id="invRecTitle">Recomendação por fase</h3>
-  <div class="card" style="box-shadow:none;border-radius:14px" id="invRecipeBox">
-    <div class="muted" id="invRecipe">Preencha os dados e clique em “Calcular”.</div>
-  </div>
-
-  <div class="hr"></div>
-
-  <h3 style="margin:0 0 8px 0" id="invChecklistTitle">Checklist obrigatório</h3>
-  <div class="card" style="box-shadow:none;border-radius:14px">
-    <label><input type="checkbox" id="invChkVent" /> <span id="invChkVentTxt">Ventilação ajustada (cenital/laterais)</span></label>
-    <label><input type="checkbox" id="invChkMalla" /> <span id="invChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-    <label><input type="checkbox" id="invChkFog" /> <span id="invChkFogTxt">Nebulização (Sim/Não) conferida</span></label>
-    <label><input type="checkbox" id="invChkFloor" /> <span id="invChkFloorTxt">Piso sem charcos / manejo correto</span></label>
-  </div>
-
-  <div class="hr"></div>
-
-  <div class="pill" id="invTimerPill">Rechecagem: —</div>
-
-  <div class="row" style="margin-top:12px;justify-content:space-between">
-    <button class="btn btnPrimary" id="invSave" disabled>Registrar ação</button>
-    <button class="btn btnDanger" id="invReset">Limpar</button>
-  </div>
-
-  <p class="muted" style="margin-top:10px" id="invAuditHint">
-    Registro só libera após cálculo + checklist completo.
-  </p>
-</div>
-  <div class="card grow">
-  <h3 id="histTitle">Histórico</h3>
-  <p class="muted" id="histDesc">
-    Registros ficam salvos neste dispositivo (LocalStorage). Exporte para Excel (CSV).
-  </p>
-
-  <div class="hr"></div>
-
-  <div class="row" style="justify-content:space-between;align-items:center">
-    <div class="row">
-      <button class="btn" id="histExport">Exportar CSV</button>
-      <button class="btn btnDanger" id="histClear">Limpar histórico</button>
-    </div>
-    <div class="pill" id="histCount">0 registros</div>
-  </div>
-
-  <div class="hr"></div>
-
-  <div style="overflow:auto">
-    <table style="width:100%;border-collapse:collapse">
-      <thead>
-        <tr>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Data/Hora</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Setor</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Fase</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Operador</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Turno</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ponto</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">T (°C)</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">UR (%)</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">PAR</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">VPD</th>
-          <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ações/Obs</th>
-        </tr>
-      </thead>
-      <tbody id="histBody"></tbody>
-    </table>
-  </div>
-
-  <p class="muted" style="margin-top:10px" id="histNote">
-    Para auditoria, cada registro guarda leituras + ações + observação escolhida.
-  </p>
-
-  <div class="hr"></div>
-  <button class="btn" id="histBack">Voltar</button>
-</div>
 <script>
   // =========================
   // Helpers
@@ -734,10 +579,6 @@
       invTitle:"🌿 Invernadero — Dados",
       invOutTitle:"Invernadero — Resultado",
 
-      operator:"Operador",
-      shift:"Turno",
-      point:"Ponto",
-      phase:"Fase",
       calc:"Calcular",
       save:"Registrar ação",
       clear:"Limpar",
@@ -748,7 +589,6 @@
 
       recheck:"Rechecagem",
       fillAll:"Preencha operador/turno/ponto + T/UR/PAR.",
-      doCalc:"Clique em Calcular para ver recomendações.",
       saved:"Registro salvo no histórico.",
       confirmClear:"Tem certeza que deseja apagar TODO o histórico deste dispositivo?"
     },
@@ -767,10 +607,6 @@
       invTitle:"🌿 Invernadero — Datos",
       invOutTitle:"Invernadero — Resultado",
 
-      operator:"Operador",
-      shift:"Turno",
-      point:"Punto",
-      phase:"Fase",
       calc:"Calcular",
       save:"Registrar acción",
       clear:"Limpiar",
@@ -781,7 +617,6 @@
 
       recheck:"Re-chequeo",
       fillAll:"Completa operador/turno/punto + T/HR/PAR.",
-      doCalc:"Presiona Calcular para ver recomendaciones.",
       saved:"Registro guardado en el historial.",
       confirmClear:"¿Seguro que deseas borrar TODO el historial de este dispositivo?"
     }
@@ -791,23 +626,19 @@
   function t(key){ return (I18N[LANG] && I18N[LANG][key]) ? I18N[LANG][key] : key; }
 
   function applyLang(){
-    // Header buttons
     $("btnHome").textContent = t("btnHome");
     $("btnHist").textContent = t("btnHist");
 
-    // Home
     $("homeTitle").textContent = t("homeTitle");
     $("homeDesc").textContent = t("homeDesc");
     $("homeInfoTitle").textContent = t("homeInfoTitle");
-    $("homeInfoText").textContent = t("homeInfoText");
+    $("homeInfoText").innerHTML = t("homeInfoText");
 
-    // Titles
     $("minTitle").textContent = t("minTitle");
     $("minOutTitle").textContent = t("minOutTitle");
     $("invTitle").textContent = t("invTitle");
     $("invOutTitle").textContent = t("invOutTitle");
 
-    // Buttons
     $("minCalc").textContent = t("calc");
     $("invCalc").textContent = t("calc");
     $("minSave").textContent = t("save");
@@ -819,7 +650,6 @@
     $("histClear").textContent = t("clearHist");
     $("histBack").textContent = t("back");
 
-    // Hist titles
     $("histTitle").textContent = t("histTitle");
     $("histDesc").textContent = t("histDesc");
   }
@@ -829,7 +659,6 @@
   // =========================
   function tickClock(){
     const d = new Date();
-    // show short, no seconds (clean)
     const txt = d.toLocaleString(LANG === "es" ? "es-CL" : "pt-BR", {
       weekday:"short", day:"2-digit", month:"short",
       hour:"2-digit", minute:"2-digit"
@@ -841,31 +670,23 @@
   // Navigation
   // =========================
   function showScreen(id){
-  document.querySelectorAll(".page").forEach(p=>{
-    p.classList.remove("active");
-  });
-
-  const page = document.getElementById(id);
-  if (page){
-    page.classList.add("active");
+    document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+    const page = document.getElementById(id);
+    if (page) page.classList.add("active");
+    if (id === "screenHist") renderHist();
+    if (id === "screenSOP") renderSOP();
   }
-}
 
-
-  // =========================
-  // Wiring basic UI events
-  // =========================
+  // Wiring
   $("langSelect").addEventListener("change", (e)=>{
     LANG = e.target.value;
     applyLang();
     tickClock();
+    renderSOP();
   });
 
   $("btnHome").onclick = ()=>showScreen("screenHome");
-  $("btnHist").onclick = ()=>{
-    showScreen("screenHist");
-    // renderHist() entra na Parte 11
-  };
+  $("btnHist").onclick = ()=>showScreen("screenHist");
 
   $("goMin").onclick = ()=>showScreen("screenMin");
   $("goInv").onclick = ()=>showScreen("screenInv");
@@ -875,19 +696,16 @@
   $("invBack").onclick = ()=>showScreen("screenHome");
   $("histBack").onclick = ()=>showScreen("screenHome");
 
-  // Init
   applyLang();
   tickClock();
   setInterval(tickClock, 1000);
-
   showScreen("screenHome");
 </script>
+
 <script>
   // =========================
-  // Parte 8: Cálculo + bandas
+  // VPD + bandas
   // =========================
-
-  // Bandas gerais (vamos refinando por fase no Invernadero na Parte 10)
   function vpdBand(vpd){
     if (vpd <= 0.6) return {key:"wet", cls:"warn"};
     if (vpd <= 1.2) return {key:"ok", cls:"ok"};
@@ -896,7 +714,6 @@
   }
 
   function bandLabel(bandKey){
-    // Rótulo bilíngue
     if (LANG === "es"){
       if (bandKey==="wet") return "Húmedo";
       if (bandKey==="ok") return "Óptimo";
@@ -911,37 +728,29 @@
   }
 
   function calcVPD(T, RH){
-    // SVP = 0.6108 * exp( (17.27*T)/(T+237.3) )
-    // VPD = SVP*(1 - RH/100)
     const svp = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
-    return svp * (1 - (RH/100)); // kPa
+    return svp * (1 - (RH/100));
   }
 
   function parseNum(id){
     const v = parseFloat($(id).value);
     return Number.isFinite(v) ? v : NaN;
   }
-
   function isFilledSelect(id){
     return String($(id).value || "").trim() !== "";
   }
 
   function minFieldsOk(){
-    // auditoria obrigatória
     if (!isFilledSelect("minOperator")) return false;
     if (!isFilledSelect("minShift")) return false;
     if (!isFilledSelect("minPoint")) return false;
 
-    const T = parseNum("minT");
-    const RH = parseNum("minRH");
-    const PAR = parseNum("minPAR");
+    const T = parseNum("minT"), RH = parseNum("minRH"), PAR = parseNum("minPAR");
     if (!Number.isFinite(T) || !Number.isFinite(RH) || !Number.isFinite(PAR)) return false;
 
-    // validações simples para evitar erro de digitação absurda
     if (T < 0 || T > 60) return false;
     if (RH < 1 || RH > 100) return false;
     if (PAR < 0 || PAR > 3000) return false;
-
     return true;
   }
 
@@ -953,61 +762,38 @@
     const phase = $("invPhase").value;
     if (!phase) return false;
 
-    const T = parseNum("invT");
-    const RH = parseNum("invRH");
-    const PAR = parseNum("invPAR");
+    const T = parseNum("invT"), RH = parseNum("invRH"), PAR = parseNum("invPAR");
     if (!Number.isFinite(T) || !Number.isFinite(RH) || !Number.isFinite(PAR)) return false;
 
     if (T < 0 || T > 60) return false;
     if (RH < 1 || RH > 100) return false;
     if (PAR < 0 || PAR > 3000) return false;
-
     return true;
   }
 
-  // Estado mínimo para liberar registro
   let minLast = { vpd:null };
   let invLast = { vpd:null };
 
   function updateSaveLocks(){
-    // Minijardim: exige cálculo + checklist completo
-    const minChecklistOK =
-      $("minChkCen").checked &&
-      $("minChkLat").checked &&
-      $("minChkMalla").checked &&
-      $("minChkFloor").checked;
+    const minChecklistOK = $("minChkCen").checked && $("minChkLat").checked && $("minChkMalla").checked && $("minChkFloor").checked;
+    $("minSave").disabled = !(Number.isFinite(minLast.vpd) && minChecklistOK);
 
-    const minOk = Number.isFinite(minLast.vpd) && minChecklistOK;
-    $("minSave").disabled = !minOk;
-
-    // Invernadero
-    const invChecklistOK =
-      $("invChkVent").checked &&
-      $("invChkMalla").checked &&
-      $("invChkFog").checked &&
-      $("invChkFloor").checked;
-
-    const invOk = Number.isFinite(invLast.vpd) && invChecklistOK;
-    $("invSave").disabled = !invOk;
+    const invChecklistOK = $("invChkVent").checked && $("invChkMalla").checked && $("invChkFog").checked && $("invChkFloor").checked;
+    $("invSave").disabled = !(Number.isFinite(invLast.vpd) && invChecklistOK);
   }
 
-  // sempre que mexer no checklist, revalida
-  ["minChkCen","minChkLat","minChkMalla","minChkFloor",
-   "invChkVent","invChkMalla","invChkFog","invChkFloor"
-  ].forEach(id=>{
-    $(id).addEventListener("change", updateSaveLocks);
-  });
+  ["minChkCen","minChkLat","minChkMalla","minChkFloor","invChkVent","invChkMalla","invChkFog","invChkFloor"]
+    .forEach(id=>$(id).addEventListener("change", updateSaveLocks));
 
-  // botões Limpar (reset visual, sem mexer no histórico)
+  // Reset
   $("minReset").onclick = ()=>{
     ["minT","minRH","minPAR"].forEach(id=>$(id).value="");
     $("minObs").value="";
     ["minChkCen","minChkLat","minChkMalla","minChkFloor"].forEach(id=>$(id).checked=false);
     $("minVPD").textContent="—";
-    $("minBadge").className="badge ok";
-    $("minBadge").textContent="—";
+    $("minBadge").className="badge ok"; $("minBadge").textContent="—";
     $("minRecipe").textContent = (LANG==="es" ? "Completa los datos y presiona “Calcular”." : "Preencha os dados e clique em “Calcular”.");
-    $("minTimerPill").textContent = (LANG==="es" ? "Re-chequeo: —" : "Rechecagem: —");
+    $("minTimerPill").textContent = `${t("recheck")}: —`;
     minLast.vpd = null;
     updateSaveLocks();
   };
@@ -1017,94 +803,15 @@
     $("invObs").value="";
     ["invChkVent","invChkMalla","invChkFog","invChkFloor"].forEach(id=>$(id).checked=false);
     $("invVPD").textContent="—";
-    $("invBadge").className="badge ok";
-    $("invBadge").textContent="—";
+    $("invBadge").className="badge ok"; $("invBadge").textContent="—";
     $("invRecipe").textContent = (LANG==="es" ? "Completa los datos y presiona “Calcular”." : "Preencha os dados e clique em “Calcular”.");
-    $("invTimerPill").textContent = (LANG==="es" ? "Re-chequeo: —" : "Rechecagem: —");
+    $("invTimerPill").textContent = `${t("recheck")}: —`;
     invLast.vpd = null;
     updateSaveLocks();
   };
 
-  // Conecta botões Calcular (a recomendação detalhada vem nas Partes 9 e 10)
-  $("minCalc").onclick = ()=>{
-    if (!minFieldsOk()){
-      $("minRecipe").textContent = t("fillAll");
-      return;
-    }
-    const T = parseNum("minT");
-    const RH = parseNum("minRH");
-    const PAR = parseNum("minPAR");
-    const vpd = calcVPD(T, RH);
-    minLast.vpd = vpd;
-
-    $("minVPD").textContent = vpd.toFixed(2);
-
-    const b = vpdBand(vpd);
-    $("minBadge").className = `badge ${b.cls}`;
-    $("minBadge").textContent = bandLabel(b.key);
-
-    // texto provisório; Parte 9 substitui por receita completa
-    $("minRecipe").textContent =
-      (LANG==="es")
-        ? `VPD ${vpd.toFixed(2)} kPa. Siguiente paso: aplicar ventilación/sombreo y registrar acción.`
-        : `VPD ${vpd.toFixed(2)} kPa. Próximo passo: aplicar ventilação/sombreamento e registrar a ação.`;
-
-    // timer provisório (Parte 12 melhora)
-    const mins = (vpd > 1.6) ? 5 : (vpd > 1.2) ? 10 : (vpd < 0.6) ? 15 : 20;
-    $("minTimerPill").textContent = `${t("recheck")}: ${mins} min`;
-
-    updateSaveLocks();
-  };
-
-  $("invCalc").onclick = ()=>{
-    if (!invFieldsOk()){
-      $("invRecipe").textContent = t("fillAll");
-      return;
-    }
-    const phase = $("invPhase").value;
-    const T = parseNum("invT");
-    const RH = parseNum("invRH");
-    const PAR = parseNum("invPAR");
-    const vpd = calcVPD(T, RH);
-    invLast.vpd = vpd;
-
-    $("invVPD").textContent = vpd.toFixed(2);
-
-    const b = vpdBand(vpd);
-    $("invBadge").className = `badge ${b.cls}`;
-    $("invBadge").textContent = bandLabel(b.key);
-
-    $("invRecipe").textContent =
-      (LANG==="es")
-        ? `Fase ${phase}. VPD ${vpd.toFixed(2)} kPa. Próximo paso: aplicar ajustes y registrar.`
-        : `Fase ${phase}. VPD ${vpd.toFixed(2)} kPa. Próximo passo: aplicar ajustes e registrar.`;
-
-    const mins = (vpd > 1.6) ? 5 : (vpd > 1.2) ? 10 : (vpd < 0.6) ? 15 : 20;
-    $("invTimerPill").textContent = `${t("recheck")}: ${mins} min`;
-
-    updateSaveLocks();
-  };
-
-  // Reaplica textos quando muda idioma (para não ficar misturado)
-  const _oldApplyLang = applyLang;
-  applyLang = function(){
-    _oldApplyLang();
-    // timer pills (se estiver vazio, mantém)
-    if ($("minTimerPill").textContent.startsWith("Re") || $("minTimerPill").textContent.startsWith("Re-")){
-      if ($("minTimerPill").textContent.includes("—")) $("minTimerPill").textContent = `${t("recheck")}: —`;
-    }
-    if ($("invTimerPill").textContent.startsWith("Re") || $("invTimerPill").textContent.startsWith("Re-")){
-      if ($("invTimerPill").textContent.includes("—")) $("invTimerPill").textContent = `${t("recheck")}: —`;
-    }
-  };
-</script>
-<script>
-  // =========================
-  // Parte 9: Recomendação MINIJARDIM (robusta)
-  // =========================
-
+  // ===== Recomendação MINIJARDIM =====
   function mallaLevelByPAR(par){
-    // retorna nível (0/30/50/70) + justificativa curta
     if (par < 400) return {lvl:0, note:(LANG==="es"?"PAR bajo: evita sombreo excesivo.":"PAR baixo: evitar sombreio excessivo.")};
     if (par < 800) return {lvl:30, note:(LANG==="es"?"PAR medio: malla ligera si T alta.":"PAR médio: malla leve se T alta.")};
     if (par < 1200) return {lvl:50, note:(LANG==="es"?"PAR alto: malla recomendada.":"PAR alto: malla recomendada.")};
@@ -1115,43 +822,30 @@
     const band = vpdBand(vpd);
     const m = mallaLevelByPAR(par);
 
-    // Regras gerais (sempre)
-    const header = (LANG==="es")
-      ? ["1) Ventilación primero (cenital + laterales).", "2) Sombreo (malla) según PAR.", "3) Agua en piso SOLO emergencia, sin charcos."]
-      : ["1) Ventilação primeiro (cenital + laterais).", "2) Sombreamento (malla) conforme PAR.", "3) Água no piso SOMENTE emergência, sem charcos."];
-
-    // Aberturas recomendadas (percentuais operacionais simples)
-    let cen = "—", lat = "—";
+    let cen="—", lat="—";
     if (vpd <= 0.6){ cen="20–40%"; lat="30–60%"; }
     else if (vpd <= 1.2){ cen="30–60%"; lat="40–70%"; }
     else if (vpd <= 1.6){ cen="70–100%"; lat="70–100%"; }
     else { cen="100%"; lat="100%"; }
 
-    // Piso: regra dura
     let piso = (LANG==="es") ? "Prohibido" : "Proibido";
     if (vpd > 1.6) piso = (LANG==="es") ? "Solo emergencia (pulso controlado)" : "Somente emergência (pulso controlado)";
 
-    // Texto de risco por banda
-    let riskTxt = "";
-    if (band.key === "wet"){
-      riskTxt = (LANG==="es")
-        ? "Riesgo sanitario (hongos): evitar ambiente pesado. Prioridad: intercambio de aire."
-        : "Risco sanitário (fungos): evitar ambiente pesado. Prioridade: troca de ar.";
-    } else if (band.key === "ok"){
-      riskTxt = (LANG==="es")
-        ? "Rango estable: mantener rutina y evitar cambios bruscos."
-        : "Faixa estável: manter rotina e evitar mudanças bruscas.";
-    } else if (band.key === "warn"){
-      riskTxt = (LANG==="es")
-        ? "Estrés subiendo: aumentar ventilación y aplicar malla según PAR."
-        : "Estresse subindo: aumentar ventilação e aplicar malla conforme PAR.";
+    let riskTxt="";
+    if (band.key==="wet"){
+      riskTxt = (LANG==="es") ? "Riesgo sanitario (hongos): evitar ambiente pesado. Prioridad: intercambio de aire."
+                              : "Risco sanitário (fungos): evitar ambiente pesado. Prioridade: troca de ar.";
+    } else if (band.key==="ok"){
+      riskTxt = (LANG==="es") ? "Rango estable: mantener rutina y evitar cambios bruscos."
+                              : "Faixa estável: manter rotina e evitar mudanças bruscas.";
+    } else if (band.key==="warn"){
+      riskTxt = (LANG==="es") ? "Estrés subiendo: aumentar ventilación y aplicar malla según PAR."
+                              : "Estresse subindo: aumentar ventilação e aplicar malla conforme PAR.";
     } else {
-      riskTxt = (LANG==="es")
-        ? "Crítico: ventilación máxima + malla. Agua en piso solo como pulso, sin charcos."
-        : "Crítico: ventilação máxima + malla. Água no piso só em pulso, sem charcos.";
+      riskTxt = (LANG==="es") ? "Crítico: ventilación máxima + malla. Agua en piso solo como pulso, sin charcos."
+                              : "Crítico: ventilação máxima + malla. Água no piso só em pulso, sem charcos.";
     }
 
-    // Proibições claras (para evitar erro)
     const forbidden = (LANG==="es")
       ? ["✖ Prohibido mojar techo/plástico para bajar temperatura.",
          "✖ Prohibido dejar charcos en pasillos/piso.",
@@ -1160,44 +854,19 @@
          "✖ Proibido deixar charcos em passagens/piso.",
          "✖ Proibido cortina aberta com cenital fechada em dia quente."];
 
-    // Monta “receita” em blocos didáticos
-    const lines = [];
-    lines.push(`<b>${LANG==="es"?"Ajuste recomendado":"Ajuste recomendado"}</b>`);
-    lines.push(`${LANG==="es"?"Cenital":"Cenital"}: <b>${cen}</b> · ${LANG==="es"?"Laterales":"Laterais"}: <b>${lat}</b>`);
-    lines.push(`${LANG==="es"?"Malla":"Malla"}: <b>${m.lvl}%</b> · <span class="muted">${m.note}</span>`);
-    lines.push(`${LANG==="es"?"Piso":"Piso"}: <b>${piso}</b>`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"Principios":"Princípios"}</b><br>${header.join("<br>")}`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"Riesgo":"Risco"}</b><br>${riskTxt}`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"No hacer":"Não fazer"}</b><br>${forbidden.join("<br>")}`);
-
-    return lines.join("<br>");
+    return `
+      <b>${LANG==="es"?"Ajuste recomendado":"Ajuste recomendado"}</b><br>
+      Cenital: <b>${cen}</b> · ${LANG==="es"?"Laterales":"Laterais"}: <b>${lat}</b><br>
+      ${LANG==="es"?"Malla":"Malla"}: <b>${m.lvl}%</b> · <span class="muted">${m.note}</span><br>
+      ${LANG==="es"?"Piso":"Piso"}: <b>${piso}</b>
+      <div class="hr"></div>
+      <b>${LANG==="es"?"Riesgo":"Risco"}</b><br>${riskTxt}
+      <div class="hr"></div>
+      <b>${LANG==="es"?"No hacer":"Não fazer"}</b><br>${forbidden.join("<br>")}
+    `;
   }
 
-  // “injeta” a receita completa na ação de calcular do Minijardim
-  const _oldMinCalc = $("minCalc").onclick;
-  $("minCalc").onclick = ()=>{
-    // reaproveita validação e cálculo da Parte 8
-    _oldMinCalc();
-
-    // se calculou, substitui receita pelo texto completo
-    if (Number.isFinite(minLast.vpd)){
-      const par = parseNum("minPAR");
-      $("minRecipe").innerHTML = minRecipeFull(minLast.vpd, par);
-    }
-
-    updateSaveLocks();
-  };
-</script>
-<script>
-  // =========================
-  // Parte 10: Recomendação INVERNADERO por Fase (M1/M2/M3)
-  // =========================
-
-  // Alvos por fase (ajustáveis depois)
-  // OBS: aqui é o "coração" da aprovação: regra clara por estágio
+  // ===== Invernadero por fase =====
   const PHASE_TARGETS = {
     M1: { vpdMin: 0.6, vpdMax: 1.2, recheckOk: 20, recheckWarn: 10, recheckCrit: 5 },
     M2: { vpdMin: 0.8, vpdMax: 1.4, recheckOk: 20, recheckWarn: 10, recheckCrit: 5 },
@@ -1217,45 +886,27 @@
     const b  = phaseBand(phase, vpd);
     const m  = mallaLevelByPAR(par);
 
-    // texto da fase
+    let vent="";
+    if (b.key==="wet"){
+      vent = (LANG==="es") ? "Aumentar intercambio de aire, evitar hoja mojada prolongada."
+                           : "Aumentar troca de ar, evitar folha molhada por longos períodos.";
+    } else if (b.key==="ok"){
+      vent = (LANG==="es") ? "Mantener rutina estable (evitar cambios bruscos)."
+                           : "Manter rotina estável (evitar mudanças bruscas).";
+    } else if (b.key==="warn"){
+      vent = (LANG==="es") ? "Subiendo VPD: aumentar ventilación y revisar riego/pulsos del cultivo."
+                           : "VPD subindo: aumentar ventilação e revisar manejo hídrico/pulsos.";
+    } else {
+      vent = (LANG==="es") ? "Crítico: ventilación máxima + malla. Revisar estrés hídrico del cultivo."
+                           : "Crítico: ventilação máxima + malla. Revisar estresse hídrico do cultivo.";
+    }
+
+    const recheckMin = (b.key==="crit") ? tg.recheckCrit : (b.key==="warn") ? tg.recheckWarn : tg.recheckOk;
+
     const phaseLine = (LANG==="es")
       ? `Fase <b>${phase}</b> · Objetivo VPD: <b>${tg.vpdMin.toFixed(1)}–${tg.vpdMax.toFixed(1)}</b> kPa`
       : `Fase <b>${phase}</b> · Alvo de VPD: <b>${tg.vpdMin.toFixed(1)}–${tg.vpdMax.toFixed(1)}</b> kPa`;
 
-    // aberturas (simples e operacionais)
-    let vent = "";
-    if (b.key==="wet"){
-      vent = (LANG==="es")
-        ? "Aumentar intercambio de aire, evitar hoja mojada prolongada."
-        : "Aumentar troca de ar, evitar folha molhada por longos períodos.";
-    } else if (b.key==="ok"){
-      vent = (LANG==="es")
-        ? "Mantener rutina estable (evitar cambios bruscos)."
-        : "Manter rotina estável (evitar mudanças bruscas).";
-    } else if (b.key==="warn"){
-      vent = (LANG==="es")
-        ? "Subiendo VPD: aumentar ventilación y revisar riego/pulsos del cultivo."
-        : "VPD subindo: aumentar ventilação e revisar manejo hídrico/pulsos.";
-    } else {
-      vent = (LANG==="es")
-        ? "Crítico: ventilación máxima + malla. Revisar estrés hídrico del cultivo."
-        : "Crítico: ventilação máxima + malla. Revisar estresse hídrico do cultivo.";
-    }
-
-    // Nebulização (mesmo se não tiver, o operador marca Sim/Não — auditoria)
-    const fogRule = (LANG==="es")
-      ? "Nebulización: registrar <b>Sim/No</b>. Si NO existe en tu estructura, marcar “No” siempre."
-      : "Nebulização: registrar <b>Sim/Não</b>. Se não existe na estrutura, marcar “Não” sempre.";
-
-    // Piso
-    const floorRule = (LANG==="es")
-      ? "Piso: prohibido dejar charcos. Limpieza solo con autorización y registro."
-      : "Piso: proibido deixar charcos. Lavagem só com autorização e registro.";
-
-    // Rechecagem sugerida
-    const recheckMin = (b.key==="crit") ? tg.recheckCrit : (b.key==="warn") ? tg.recheckWarn : tg.recheckOk;
-
-    // “No hacer” por fase (mais rígido em M1)
     const noDo = [];
     if (phase==="M1"){
       noDo.push(LANG==="es"
@@ -1269,223 +920,26 @@
       ? "✖ Prohibido decisiones sin checklist completo."
       : "✖ Proibido decisão sem checklist completo.");
 
-    // Monta receita final
-    const lines = [];
-    lines.push(phaseLine);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"Acción recomendada":"Ação recomendada"}</b><br>${vent}`);
-    lines.push(`<br>${LANG==="es"?"Malla":"Malla"}: <b>${m.lvl}%</b> · <span class="muted">${m.note}</span>`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"Auditoría":"Auditoria"}</b><br>${fogRule}<br>${floorRule}`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"Re-chequeo":"Rechecagem"}</b>: <b>${recheckMin} min</b>`);
-    lines.push(`<div class="hr"></div>`);
-    lines.push(`<b>${LANG==="es"?"No hacer":"Não fazer"}</b><br>${noDo.join("<br>")}`);
-
-    return { html: lines.join("<br>"), recheckMin, bandKey:b.key, bandCls:b.cls };
+    return { html: `
+      ${phaseLine}
+      <div class="hr"></div>
+      <b>${LANG==="es"?"Acción recomendada":"Ação recomendada"}</b><br>${vent}<br><br>
+      ${LANG==="es"?"Malla":"Malla"}: <b>${m.lvl}%</b> · <span class="muted">${m.note}</span>
+      <div class="hr"></div>
+      <b>${LANG==="es"?"Re-chequeo":"Rechecagem"}</b>: <b>${recheckMin} min</b>
+      <div class="hr"></div>
+      <b>${LANG==="es"?"No hacer":"Não fazer"}</b><br>${noDo.join("<br>")}
+    `, recheckMin, bandKey:b.key, bandCls:b.cls };
   }
 
-  // substitui o comportamento do "Calcular" do Invernadero para usar receita por fase
-  const _oldInvCalc = $("invCalc").onclick;
-  $("invCalc").onclick = ()=>{
-    _oldInvCalc(); // valida e calcula VPD (Parte 8)
-
-    if (Number.isFinite(invLast.vpd)){
-      const phase = $("invPhase").value;
-      const par   = parseNum("invPAR");
-
-      const r = invRecipeFull(phase, invLast.vpd, par);
-      $("invRecipe").innerHTML = r.html;
-
-      // badge agora é por fase (mais real)
-      $("invBadge").className = `badge ${r.bandCls}`;
-      $("invBadge").textContent = bandLabel(r.bandKey);
-
-      $("invTimerPill").textContent = `${t("recheck")}: ${r.recheckMin} min`;
-    }
-
-    updateSaveLocks();
-  };
-</script>
-<script>
-  // =========================
-  // Parte 11: Histórico + Auditoria + CSV
-  // =========================
-
-  const HIST_KEY = "app_vivero_pro_hist_v1";
-
-  function loadHist(){
-    try{
-      return JSON.parse(localStorage.getItem(HIST_KEY) || "[]");
-    }catch(e){
-      return [];
-    }
-  }
-
-  function saveHist(arr){
-    localStorage.setItem(HIST_KEY, JSON.stringify(arr));
-  }
-
-  function addRecord(rec){
-    const arr = loadHist();
-    arr.unshift(rec);              // mais recente primeiro
-    saveHist(arr);
-    renderHist();
-    alert(t("saved"));
-  }
-
-  function renderHist(){
-    const arr = loadHist();
-    $("histCount").textContent = `${arr.length} ${LANG==="es"?"registros":"registros"}`;
-
-    const tb = $("histBody");
-    tb.innerHTML = "";
-
-    arr.slice(0, 300).forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td>${r.ts}</td>
-        <td>${r.sector}</td>
-        <td>${r.phase || "—"}</td>
-        <td>${r.operator}</td>
-        <td>${r.shift}</td>
-        <td>${r.point}</td>
-        <td>${r.T}</td>
-        <td>${r.RH}</td>
-        <td>${r.PAR}</td>
-        <td>${r.VPD}</td>
-        <td>${r.actions} · ${r.obs || ""}</td>
-      `;
-      tb.appendChild(tr);
-    });
-  }
-
-  function exportCSV(){
-    const arr = loadHist();
-    if (!arr.length){
-      alert(LANG==="es" ? "No hay registros." : "Não há registros.");
-      return;
-    }
-
-    const headers = [
-      "FechaHora","Sector","Fase","Operador","Turno","Punto",
-      "T_C","UR_pct","PAR","VPD_kPa","Acciones","Observacion"
-    ];
-
-    const rows = arr.map(r=>[
-      r.ts, r.sector, r.phase||"", r.operator, r.shift, r.point,
-      r.T, r.RH, r.PAR, r.VPD,
-      (r.actions||"").replaceAll('"','""'),
-      (r.obs||"").replaceAll('"','""')
-    ]);
-
-    const csv = [
-      headers.join(","),
-      ...rows.map(row => row.map(v => `"${v}"`).join(","))
-    ].join("\n");
-
-    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
-    const url = URL.createObjectURL(blob);
-
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `hist_vivero_${new Date().toISOString().slice(0,10)}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  // -------------------------
-  // Hooks dos botões do Histórico
-  // -------------------------
-  $("histExport").onclick = exportCSV;
-
-  $("histClear").onclick = ()=>{
-    if (confirm(t("confirmClear"))){
-      localStorage.removeItem(HIST_KEY);
-      renderHist();
-    }
-  };
-
-  // sempre que abrir a tela de histórico, atualiza
-  const _oldShowScreen = showScreen;
-  showScreen = function(screenId){
-    _oldShowScreen(screenId);
-    if (screenId === "screenHist"){
-      renderHist();
-    }
-  };
-
-  // -------------------------
-  // SALVAR — MINIJARDIM
-  // -------------------------
-  $("minSave").onclick = ()=>{
-    if (!Number.isFinite(minLast.vpd)) return;
-
-    const actions =
-      `Cenital✔ | Laterais✔ | Malla✔ | Piso✔`;
-
-    addRecord({
-      ts: nowISO(),
-      sector: (LANG==="es"?"Minijardín":"Minijardim"),
-      phase: "",
-      operator: $("minOperator").value,
-      shift: $("minShift").value,
-      point: $("minPoint").value,
-      T: $("minT").value,
-      RH: $("minRH").value,
-      PAR: $("minPAR").value,
-      VPD: minLast.vpd.toFixed(2),
-      actions: actions,
-      obs: $("minObs").value
-    });
-  };
-
-  // -------------------------
-  // SALVAR — INVERNADERO
-  // -------------------------
-  $("invSave").onclick = ()=>{
-    if (!Number.isFinite(invLast.vpd)) return;
-
-    const actions =
-      `Vent✔ | Malla✔ | Neb✔ | Piso✔`;
-
-    addRecord({
-      ts: nowISO(),
-      sector: (LANG==="es"?"Invernadero":"Invernadero"),
-      phase: $("invPhase").value,
-      operator: $("invOperator").value,
-      shift: $("invShift").value,
-      point: $("invPoint").value,
-      T: $("invT").value,
-      RH: $("invRH").value,
-      PAR: $("invPAR").value,
-      VPD: invLast.vpd.toFixed(2),
-      actions: actions,
-      obs: $("invObs").value
-    });
-  };
-
-  // Inicializa histórico ao carregar
-  renderHist();
-</script>
-<script>
-  // =========================
-  // Parte 12: Timer real + SOP + final
-  // =========================
-
-  // -------- Timer de rechecagem (um por setor) --------
+  // ===== Timer real =====
   let minTimer = { until: 0, interval: null };
   let invTimer = { until: 0, interval: null };
 
   function startRecheckTimer(kind, minutes){
     const obj = (kind === "min") ? minTimer : invTimer;
     obj.until = Date.now() + minutes * 60 * 1000;
-
-    if (!obj.interval){
-      obj.interval = setInterval(()=>updateRecheckTimer(kind), 500);
-    }
+    if (!obj.interval) obj.interval = setInterval(()=>updateRecheckTimer(kind), 500);
     updateRecheckTimer(kind);
   }
 
@@ -1500,9 +954,7 @@
 
     const ms = obj.until - Date.now();
     if (ms <= 0){
-      pill.textContent = (LANG==="es")
-        ? `Re-chequeo: ¡AHORA!`
-        : `Rechecagem: AGORA!`;
+      pill.textContent = (LANG==="es") ? `Re-chequeo: ¡AHORA!` : `Rechecagem: AGORA!`;
       obj.until = 0;
       return;
     }
@@ -1513,33 +965,178 @@
     pill.textContent = `${t("recheck")}: ${mm}m ${ss}s`;
   }
 
-  // Hook: sempre que calcular, inicia timer real usando o valor do pill (Parte 8/10)
-  function extractMinutesFromPill(pillText){
-    // formatos: "Rechecagem: 10 min" / "Re-chequeo: 10 min"
-    const m = pillText.match(/(\d+)\s*min/i);
-    return m ? parseInt(m[1],10) : null;
+  // Calcular MINIJARDIM
+  $("minCalc").onclick = ()=>{
+    if (!minFieldsOk()){
+      $("minRecipe").textContent = t("fillAll");
+      return;
+    }
+    const T = parseNum("minT"), RH = parseNum("minRH"), PAR = parseNum("minPAR");
+    const vpd = calcVPD(T, RH);
+    minLast.vpd = vpd;
+
+    $("minVPD").textContent = vpd.toFixed(2);
+    const b = vpdBand(vpd);
+    $("minBadge").className = `badge ${b.cls}`;
+    $("minBadge").textContent = bandLabel(b.key);
+
+    $("minRecipe").innerHTML = minRecipeFull(vpd, PAR);
+
+    const mins = (vpd > 1.6) ? 5 : (vpd > 1.2) ? 10 : (vpd < 0.6) ? 15 : 20;
+    $("minTimerPill").textContent = `${t("recheck")}: ${mins} min`;
+    startRecheckTimer("min", mins);
+
+    updateSaveLocks();
+  };
+
+  // Calcular INVERNADERO
+  $("invCalc").onclick = ()=>{
+    if (!invFieldsOk()){
+      $("invRecipe").textContent = t("fillAll");
+      return;
+    }
+    const phase = $("invPhase").value;
+    const T = parseNum("invT"), RH = parseNum("invRH"), PAR = parseNum("invPAR");
+    const vpd = calcVPD(T, RH);
+    invLast.vpd = vpd;
+
+    $("invVPD").textContent = vpd.toFixed(2);
+
+    const r = invRecipeFull(phase, vpd, PAR);
+    $("invRecipe").innerHTML = r.html;
+
+    $("invBadge").className = `badge ${r.bandCls}`;
+    $("invBadge").textContent = bandLabel(r.bandKey);
+
+    $("invTimerPill").textContent = `${t("recheck")}: ${r.recheckMin} min`;
+    startRecheckTimer("inv", r.recheckMin);
+
+    updateSaveLocks();
+  };
+
+  // =========================
+  // Histórico + CSV
+  // =========================
+  const HIST_KEY = "app_vivero_pro_hist_v1";
+
+  function loadHist(){
+    try{ return JSON.parse(localStorage.getItem(HIST_KEY) || "[]"); }
+    catch(e){ return []; }
+  }
+  function saveHist(arr){ localStorage.setItem(HIST_KEY, JSON.stringify(arr)); }
+
+  function addRecord(rec){
+    const arr = loadHist();
+    arr.unshift(rec);
+    saveHist(arr);
+    renderHist();
+    alert(t("saved"));
   }
 
-  const _minCalcFinal = $("minCalc").onclick;
-  $("minCalc").onclick = ()=>{
-    _minCalcFinal();
-    const mins = extractMinutesFromPill($("minTimerPill").textContent);
-    if (mins) startRecheckTimer("min", mins);
+  function renderHist(){
+    const arr = loadHist();
+    $("histCount").textContent = `${arr.length} ${LANG==="es"?"registros":"registros"}`;
+    const tb = $("histBody");
+    tb.innerHTML = "";
+    arr.slice(0, 300).forEach(r=>{
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.ts}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.sector}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.phase || "—"}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.operator}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.shift}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.point}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.T}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.RH}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.PAR}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.VPD}</td>
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.actions} · ${r.obs || ""}</td>
+      `;
+      tb.appendChild(tr);
+    });
+  }
+
+  function exportCSV(){
+    const arr = loadHist();
+    if (!arr.length){
+      alert(LANG==="es" ? "No hay registros." : "Não há registros.");
+      return;
+    }
+    const headers = ["FechaHora","Sector","Fase","Operador","Turno","Punto","T_C","UR_pct","PAR","VPD_kPa","Acciones","Observacion"];
+    const rows = arr.map(r=>[
+      r.ts, r.sector, r.phase||"", r.operator, r.shift, r.point, r.T, r.RH, r.PAR, r.VPD,
+      (r.actions||"").replaceAll('"','""'),
+      (r.obs||"").replaceAll('"','""')
+    ]);
+    const csv = [headers.join(","), ...rows.map(row => row.map(v => `"${v}"`).join(","))].join("\n");
+    const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `hist_vivero_${new Date().toISOString().slice(0,10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  $("histExport").onclick = exportCSV;
+
+  $("histClear").onclick = ()=>{
+    if (confirm(t("confirmClear"))){
+      localStorage.removeItem(HIST_KEY);
+      renderHist();
+    }
   };
 
-  const _invCalcFinal = $("invCalc").onclick;
-  $("invCalc").onclick = ()=>{
-    _invCalcFinal();
-    const mins = extractMinutesFromPill($("invTimerPill").textContent);
-    if (mins) startRecheckTimer("inv", mins);
+  // Save MIN
+  $("minSave").onclick = ()=>{
+    if (!Number.isFinite(minLast.vpd)) return;
+    const actions = `Cenital✔ | Laterais✔ | Malla✔ | Piso✔`;
+    addRecord({
+      ts: nowISO(),
+      sector: (LANG==="es"?"Minijardín":"Minijardim"),
+      phase: "",
+      operator: $("minOperator").value,
+      shift: $("minShift").value,
+      point: $("minPoint").value,
+      T: $("minT").value,
+      RH: $("minRH").value,
+      PAR: $("minPAR").value,
+      VPD: minLast.vpd.toFixed(2),
+      actions,
+      obs: $("minObs").value
+    });
   };
 
-  // -------- SOP (tela completa + bilíngue) --------
+  // Save INV
+  $("invSave").onclick = ()=>{
+    if (!Number.isFinite(invLast.vpd)) return;
+    const actions = `Vent✔ | Malla✔ | Neb✔ | Piso✔`;
+    addRecord({
+      ts: nowISO(),
+      sector: (LANG==="es"?"Invernadero":"Invernadero"),
+      phase: $("invPhase").value,
+      operator: $("invOperator").value,
+      shift: $("invShift").value,
+      point: $("invPoint").value,
+      T: $("invT").value,
+      RH: $("invRH").value,
+      PAR: $("invPAR").value,
+      VPD: invLast.vpd.toFixed(2),
+      actions,
+      obs: $("invObs").value
+    });
+  };
+
+  renderHist();
+
+  // =========================
+  // SOP
+  // =========================
   function renderSOP(){
-    const title = (LANG==="es")
-      ? "📄 SOP — Microclima (operación segura)"
-      : "📄 SOP — Microclima (operação segura)";
-
+    const title = (LANG==="es") ? "📄 SOP — Microclima (operación segura)" : "📄 SOP — Microclima (operação segura)";
     const rulesTitle = (LANG==="es") ? "Reglas no negociables" : "Regras inegociáveis";
     const floorTitle = (LANG==="es") ? "Agua en piso (solo emergencia)" : "Água no piso (somente emergência)";
     const back = (LANG==="es") ? "Volver" : "Voltar";
@@ -1570,60 +1167,32 @@
         "Rechecar em 5–10 min e registrar."
       ];
 
-    // monta HTML
-    $("screenSOP").innerHTML = `
-      <div class="card grow">
-        <h3>${title}</h3>
-        <div class="hr"></div>
+    $("sopContainer").innerHTML = `
+      <div class="row">
+        <div class="card grow">
+          <h3>${title}</h3>
+          <div class="hr"></div>
 
-        <h3 style="margin:0 0 8px 0">${rulesTitle}</h3>
-        <div class="card" style="box-shadow:none;border-radius:14px">
-          ${rules.map(x=>`• ${x}`).join("<br>")}
+          <h3 style="margin:0 0 8px 0">${rulesTitle}</h3>
+          <div class="card" style="box-shadow:none;border-radius:14px">
+            ${rules.map(x=>`• ${x}`).join("<br>")}
+          </div>
+
+          <div class="hr"></div>
+
+          <h3 style="margin:0 0 8px 0">${floorTitle}</h3>
+          <div class="card" style="box-shadow:none;border-radius:14px">
+            ${floor.map(x=>`• ${x}`).join("<br>")}
+          </div>
+
+          <div class="hr"></div>
+          <button class="btn" id="sopBack">${back}</button>
         </div>
-
-        <div class="hr"></div>
-
-        <h3 style="margin:0 0 8px 0">${floorTitle}</h3>
-        <div class="card" style="box-shadow:none;border-radius:14px">
-          ${floor.map(x=>`• ${x}`).join("<br>")}
-        </div>
-
-        <div class="hr"></div>
-        <button class="btn" id="sopBack">${back}</button>
       </div>
     `;
-
     $("sopBack").onclick = ()=>showScreen("screenHome");
   }
-
-  // sempre que entrar na SOP, renderiza com idioma atual
-  const _oldGoSOP = $("goSOP").onclick;
-  $("goSOP").onclick = ()=>{
-    renderSOP();
-    showScreen("screenSOP");
-  };
-
-  // quando troca idioma, atualiza SOP se estiver aberto + timers
-  const _applyLangFinal = applyLang;
-  applyLang = function(){
-    _applyLangFinal();
-
-    // se SOP está visível, re-render
-    if (!$("screenSOP").classList.contains("hide")){
-      renderSOP();
-    }
-
-    // atualiza pills de timer (mantém contagem)
-    updateRecheckTimer("min");
-    updateRecheckTimer("inv");
-  };
-
-  // init SOP e timers
-  renderSOP();
-  updateRecheckTimer("min");
-  updateRecheckTimer("inv");
 </script>
 
 </body>
 </html>
-
