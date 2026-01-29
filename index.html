@@ -832,6 +832,31 @@ function parseNumStrict(id){
     const el = $(id);
     return !!el && String(el.value || "").trim() !== "";
   }
+  // =========================
+// Aviso de valores incomuns (não bloqueante)
+// =========================
+function unusualWarnings(T, RH, PAR){
+  const warns = [];
+
+  if (T > 45) warns.push(LANG==="es"
+    ? "⚠️ Temperatura muy alta. Verifica sensor."
+    : "⚠️ Temperatura muito alta. Verifique o sensor.");
+
+  if (RH < 10) warns.push(LANG==="es"
+    ? "⚠️ Humedad muy baja. Confirma lectura."
+    : "⚠️ Umidade muito baixa. Confirme a leitura.");
+
+  if (RH > 98) warns.push(LANG==="es"
+    ? "⚠️ Humedad muy alta. Riesgo de condensación."
+    : "⚠️ Umidade muito alta. Risco de condensação.");
+
+  if (PAR > 2000) warns.push(LANG==="es"
+    ? "⚠️ PAR extremadamente alto. Confirma calibración."
+    : "⚠️ PAR extremamente alto. Confirme calibração.");
+
+  return warns;
+}
+
 
  
  
@@ -862,10 +887,10 @@ if (!isFilledField("invPoint")) return false;
     const T = parseNum("invT"), RH = parseNum("invRH"), PAR = parseNum("invPAR");
     if (!Number.isFinite(T) || !Number.isFinite(RH) || !Number.isFinite(PAR)) return false;
 
-    if (T < 0 || T > 60) return false;
-    if (RH < 1 || RH > 100) return false;
-    if (PAR < 0 || PAR > 3000) return false;
-    return true;
+   if (T < 0 || T > 60) return "Temperatura fora do intervalo (0–60 °C).";
+if (RH < 1 || RH > 100) return "Umidade fora do intervalo (1–100%).";
+if (PAR < 0 || PAR > 3000) return "PAR fora do intervalo (0–3000).";
+return true;
   }
 
   const SOP_VERSION = "SOP_v1.0_FaseA";
@@ -910,30 +935,6 @@ let invLast = { vpd:null, bandKey:null, rec:null };
     updateSaveLocks();
   };
 
-  // =========================
-  // Aviso de valores incomuns (não bloqueante)
-  // =========================
-  function unusualWarnings(T, RH, PAR){
-    const warns = [];
-
-    if (T > 45) warns.push(LANG==="es"
-      ? "Temperatura muy alta. Verifica sensor."
-      : "Temperatura muito alta. Verifique o sensor.");
-
-    if (RH < 10) warns.push(LANG==="es"
-      ? "Humedad muy baja. Confirma lectura."
-      : "Umidade muito baixa. Confirme a leitura.");
-
-    if (RH > 98) warns.push(LANG==="es"
-      ? "Humedad muy alta. Riesgo de condensación."
-      : "Umidade muito alta. Risco de condensação.");
-
-    if (PAR > 2000) warns.push(LANG==="es"
-      ? "PAR extremadamente alto. Confirma calibración."
-      : "PAR extremamente alto. Confirme calibração.");
-
-    return warns;
-  }
 
   // ===== Recomendação MINIJARDIM =====
   function mallaLevelByPAR(par){
@@ -1109,10 +1110,12 @@ invLast.rec = {
 
   // Calcular MINIJARDIM
   $("minCalc").onclick = ()=>{
-    if (!minFieldsOk()){
-      $("minRecipe").textContent = t("fillAll");
-      return;
-    }
+    const okMsg = minFieldsOk();
+if (okMsg !== true){
+  $("minRecipe").textContent = (okMsg || t("fillAll"));
+  return;
+}
+
     const T = parseNum("minT"), RH = parseNum("minRH"), PAR = parseNum("minPAR");
     const vpd = calcVPD(T, RH);
     minLast.vpd = vpd;
