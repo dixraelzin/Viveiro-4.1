@@ -236,6 +236,10 @@
       <div id="screenHome" class="page active">
         <div class="pageInner">
           <div class="row">
+                      </div> <!-- fecha .row -->
+        </div>   <!-- fecha .pageInner -->
+      </div>     <!-- fecha #screenHome -->
+
 
             <!-- CARD PRINCIPAL -->
             <div class="card grow">
@@ -255,13 +259,24 @@
               <p class="muted" style="margin-top:10px">
                 Os registros ficam salvos localmente neste dispositivo e podem ser exportados para Excel (CSV).
               </p>
-            </div>
+           </div>
+      <div class="card half">
+  <h3 id="homeInfoTitle">Princípios de manejo</h3>
+  <p class="muted" id="homeInfoText">
+    Ordem correta: ventilação → sombreamento → água (apenas emergência). Sempre registre a ação.
+  </p>
+</div>
+
 
 
       <!-- MINIJARDIM -->
       <div id="screenMin" class="page">
         <div class="pageInner">
           <div class="row">
+                      </div> <!-- fecha .row -->
+        </div>   <!-- fecha .pageInner -->
+      </div>     <!-- fecha #screenHome -->
+
 
             <!-- MINIJARDIM: DADOS -->
             <div class="card half">
@@ -376,6 +391,10 @@
       <div id="screenInv" class="page">
         <div class="pageInner">
           <div class="row">
+                      </div> <!-- fecha .row -->
+        </div>   <!-- fecha .pageInner -->
+      </div>     <!-- fecha #screenHome -->
+
 
             <!-- INVERNADERO: DADOS -->
             <div class="card half">
@@ -1404,6 +1423,7 @@ if (!$("invIrrigChosen").value){
   `;
   tb.appendChild(tr);
 });
+  }
 
 
   function exportCSV(){
