@@ -885,7 +885,7 @@ let invLast = { vpd:null, bandKey:null, rec:null };
   ["minChkCen","minChkLat","minChkMalla","minChkFloor","invChkVent","invChkMalla","invChkFog","invChkFloor"]
     .forEach(id=>$(id).addEventListener("change", updateSaveLocks));
 
-  // Reset
+   // Reset
   $("minReset").onclick = ()=>{
     ["minT","minRH","minPAR"].forEach(id=>$(id).value="");
     $("minObs").value="";
@@ -908,32 +908,32 @@ let invLast = { vpd:null, bandKey:null, rec:null };
     $("invTimerPill").textContent = `${t("recheck")}: —`;
     invLast.vpd = null;
     updateSaveLocks();
-    // =========================
-// Aviso de valores incomuns (não bloqueante)
-// =========================
-function unusualWarnings(T, RH, PAR){
-  const warns = [];
-
-  if (T > 45) warns.push(LANG==="es"
-    ? "⚠️ Temperatura muy alta. Verifica sensor."
-    : "⚠️ Temperatura muito alta. Verifique o sensor.");
-
-  if (RH < 10) warns.push(LANG==="es"
-    ? "⚠️ Humedad muy baja. Confirma lectura."
-    : "⚠️ Umidade muito baixa. Confirme a leitura.");
-
-  if (RH > 98) warns.push(LANG==="es"
-    ? "⚠️ Humedad muy alta. Riesgo de condensación."
-    : "⚠️ Umidade muito alta. Risco de condensação.");
-
-  if (PAR > 2000) warns.push(LANG==="es"
-    ? "⚠️ PAR extremadamente alto. Confirma calibración."
-    : "⚠️ PAR extremamente alto. Confirme calibração.");
-
-  return warns;
-}
-
   };
+
+  // =========================
+  // Aviso de valores incomuns (não bloqueante)
+  // =========================
+  function unusualWarnings(T, RH, PAR){
+    const warns = [];
+
+    if (T > 45) warns.push(LANG==="es"
+      ? "Temperatura muy alta. Verifica sensor."
+      : "Temperatura muito alta. Verifique o sensor.");
+
+    if (RH < 10) warns.push(LANG==="es"
+      ? "Humedad muy baja. Confirma lectura."
+      : "Umidade muito baixa. Confirme a leitura.");
+
+    if (RH > 98) warns.push(LANG==="es"
+      ? "Humedad muy alta. Riesgo de condensación."
+      : "Umidade muito alta. Risco de condensação.");
+
+    if (PAR > 2000) warns.push(LANG==="es"
+      ? "PAR extremadamente alto. Confirma calibración."
+      : "PAR extremamente alto. Confirme calibração.");
+
+    return warns;
+  }
 
   // ===== Recomendação MINIJARDIM =====
   function mallaLevelByPAR(par){
