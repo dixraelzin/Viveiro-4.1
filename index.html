@@ -228,7 +228,6 @@
         <button class="btn" id="btnHist">Histórico</button>
       </div>
     </div>
-
     <!-- TELAS -->
     <div class="stage">
 
@@ -236,10 +235,6 @@
       <div id="screenHome" class="page active">
         <div class="pageInner">
           <div class="row">
-                      </div> <!-- fecha .row -->
-        </div>   <!-- fecha .pageInner -->
-      </div>     <!-- fecha #screenHome -->
-
 
             <!-- CARD PRINCIPAL -->
             <div class="card grow">
@@ -259,335 +254,233 @@
               <p class="muted" style="margin-top:10px">
                 Os registros ficam salvos localmente neste dispositivo e podem ser exportados para Excel (CSV).
               </p>
-           </div>
-      <div class="card half">
-  <h3 id="homeInfoTitle">Princípios de manejo</h3>
-  <p class="muted" id="homeInfoText">
-    Ordem correta: ventilação → sombreamento → água (apenas emergência). Sempre registre a ação.
-  </p>
-</div>
+            </div>
 
+            <!-- PRINCÍPIOS DE MANEJO (seu JS usa esses IDs) -->
+            <div class="card grow">
+              <h3 id="homeInfoTitle">Princípios de manejo</h3>
+              <p class="muted" id="homeInfoText">
+                Ordem correta: ventilação → sombreamento → água (apenas emergência). Sempre registre a ação.
+              </p>
+            </div>
 
+          </div>
+        </div>
+      </div>
 
       <!-- MINIJARDIM -->
-      <div id="screenMin" class="page">
-        <div class="pageInner">
-          <div class="row">
-                      </div> <!-- fecha .row -->
-        </div>   <!-- fecha .pageInner -->
-      </div>     <!-- fecha #screenHome -->
+      <div class="pageInner">
+  <div class="row">
 
+    <!-- MINIJARDIM: DADOS -->
+    <div class="card half">
+      <h3 id="minTitle">🌱 Minijardim — Dados</h3>
+      <p class="muted" id="minHelp">
+        Preencha as leituras e use “Calcular” para receber recomendações. Para registrar, complete o checklist.
+      </p>
 
-            <!-- MINIJARDIM: DADOS -->
-            <div class="card half">
-              <h3 id="minTitle">🌱 Minijardim — Dados</h3>
-              <p class="muted" id="minHelp">
-                Preencha as leituras e use “Calcular” para receber recomendações. Para registrar, complete o checklist.
-              </p>
+      <div class="hr"></div>
 
-              <div class="hr"></div>
+      <label>Operador</label>
+      <input id="minOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
 
-             <label id="lblOperator">Operador</label>
-<input id="minOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
+      <label>Turno</label>
+      <select id="minShift">
+        <option value="">—</option>
+        <option>Manhã</option>
+        <option>Tarde</option>
+        <option>Noite</option>
+      </select>
 
-        
+      <label>Ponto</label>
+      <select id="minPoint">
+        <option value="">—</option>
+        <option>A1</option><option>A2</option><option>A3</option>
+        <option>B1</option><option>B2</option><option>B3</option>
+      </select>
 
-              <label id="lblShift">Turno</label>
-              <select id="minShift">
-                <option value="">—</option>
-                <option>Manhã</option><option>Tarde</option><option>Noite</option>
-              </select>
+      <div class="hr"></div>
 
-              <label id="lblPoint">Ponto</label>
-              <select id="minPoint">
-                <option value="">—</option>
-                <option>A1</option><option>A2</option><option>A3</option>
-                <option>B1</option><option>B2</option><option>B3</option>
-              </select>
+      <label>Temperatura do ar (°C)</label>
+      <input id="minT" type="number" step="0.1" />
 
-              <div class="hr"></div>
+      <label>Umidade relativa (%)</label>
+      <input id="minRH" type="number" step="1" />
 
-              <label id="lblT">Temperatura do ar (°C)</label>
-              <input id="minT" type="number" step="0.1" placeholder="Ex: 31.5" />
+      <label>PAR (µmol·m⁻²·s⁻¹)</label>
+      <input id="minPAR" type="number" step="1" />
 
-              <label id="lblRH">Umidade relativa (%)</label>
-              <input id="minRH" type="number" step="1" placeholder="Ex: 22" />
+      <label>Observação</label>
+      <select id="minObs">
+        <option value="">—</option>
+        <option>Ambiente pesado</option>
+        <option>Folha mole</option>
+        <option>Folha dura</option>
+        <option>Substrato seco</option>
+        <option>Substrato encharcado</option>
+        <option>Charcos</option>
+        <option>Outros</option>
+      </select>
 
-              <label id="lblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-              <input id="minPAR" type="number" step="1" placeholder="Ex: 1050" />
+      <div class="row" style="margin-top:12px;justify-content:space-between">
+        <button class="btn btnPrimary" id="minCalc">Calcular</button>
+        <button class="btn" id="minBack">Voltar</button>
+      </div>
+    </div>
 
-              <label id="lblObs">Observação (lista)</label>
-              <select id="minObs">
-                <option value="">—</option>
-                <option>Ambiente pesado (pouca troca de ar)</option>
-                <option>Folha mole / murcha</option>
-                <option>Folha dura / estresse aparente</option>
-                <option>Substrato seco / bandeja seca</option>
-                <option>Substrato encharcado / risco sanitário</option>
-                <option>Charcos no piso</option>
-                <option>Outros</option>
-              </select>
+    <!-- MINIJARDIM: RESULTADO -->
+    <div class="card half">
+      <h3>Resultado</h3>
 
-              <div class="row" style="margin-top:12px;justify-content:space-between">
-                <button class="btn btnPrimary" id="minCalc">Calcular</button>
-                <button class="btn" id="minBack">Voltar</button>
-              </div>
-
-              <p class="muted" style="margin-top:10px" id="minTip">
-                Dica: medir na altura do dossel e usar o pior ponto como referência operacional.
-              </p>
-            </div>
-
-            <!-- MINIJARDIM: RESULTADO -->
-            <div class="card half">
-              <h3 id="minOutTitle">Minijardim — Resultado</h3>
-
-              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-                <div>
-                  <div class="muted" id="minVpdLbl">VPD (kPa)</div>
-                  <div class="big" id="minVPD">—</div>
-                </div>
-                <div>
-                  <div class="badge ok" id="minBadge">—</div>
-                </div>
-              </div>
-
-              <div class="hr"></div>
-
-              <h3 style="margin:0 0 8px 0" id="minRecTitle">Recomendação operacional</h3>
-              <div class="card" style="box-shadow:none;border-radius:14px" id="minRecipeBox">
-                <div class="muted" id="minRecipe">Preencha os dados e clique em “Calcular”.</div>
-              </div>
-
-              <div class="hr"></div>
-
-              <h3 style="margin:0 0 8px 0" id="minChecklistTitle">Checklist obrigatório</h3>
-              <div class="card" style="box-shadow:none;border-radius:14px">
-                <label><input type="checkbox" id="minChkCen" /> <span id="minChkCenTxt">Cenital ajustada conforme recomendação</span></label>
-                <label><input type="checkbox" id="minChkLat" /> <span id="minChkLatTxt">Laterais ajustadas conforme recomendação</span></label>
-                <label><input type="checkbox" id="minChkMalla" /> <span id="minChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-                <label><input type="checkbox" id="minChkFloor" /> <span id="minChkFloorTxt">Piso: sem charcos / manejo correto</span></label>
-              </div>
-
-              <div class="hr"></div>
-
-              <div class="pill" id="minTimerPill">Rechecagem: —</div>
-
-              <div class="row" style="margin-top:12px;justify-content:space-between">
-                <button class="btn btnPrimary" id="minSave" disabled>Registrar ação</button>
-                <button class="btn btnDanger" id="minReset">Limpar</button>
-              </div>
-
-              <p class="muted" style="margin-top:10px" id="minAuditHint">
-                Registro só libera após cálculo + checklist completo (reduz erro operacional).
-              </p>
-            </div>
-
-          </div>
+      <div style="display:flex;justify-content:space-between;align-items:end">
+        <div>
+          <div class="muted">VPD (kPa)</div>
+          <div class="big" id="minVPD">—</div>
+        </div>
+        <div>
+          <div class="badge ok" id="minBadge">—</div>
         </div>
       </div>
 
+      <div class="hr"></div>
+
+      <div class="card" id="minRecipeBox" style="box-shadow:none">
+        <div class="muted" id="minRecipe">Preencha os dados.</div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="card" style="box-shadow:none">
+        <label><input type="checkbox" id="minChkCen"> Cenital ajustada</label>
+        <label><input type="checkbox" id="minChkLat"> Laterais ajustadas</label>
+        <label><input type="checkbox" id="minChkMalla"> Malla aplicada</label>
+        <label><input type="checkbox" id="minChkFloor"> Piso correto</label>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="pill" id="minTimerPill">Rechecagem: —</div>
+
+      <div class="row" style="margin-top:12px;justify-content:space-between">
+        <button class="btn btnPrimary" id="minSave" disabled>Registrar</button
+
+
       <!-- INVERNADERO -->
-      <div id="screenInv" class="page">
-        <div class="pageInner">
-          <div class="row">
-                      </div> <!-- fecha .row -->
-        </div>   <!-- fecha .pageInner -->
-      </div>     <!-- fecha #screenHome -->
+      <div class="pageInner">
+  <div class="row">
 
+    <!-- INVERNADERO: DADOS -->
+    <div class="card half">
+      <h3>🌿 Invernadero — Dados</h3>
 
-            <!-- INVERNADERO: DADOS -->
-            <div class="card half">
-              <h3 id="invTitle">🌿 Invernadero — Dados</h3>
-              <p class="muted" id="invHelp">
-                Selecione a fase (M1/M2/M3), insira leituras e calcule. Para registrar, complete o checklist.
-              </p>
+      <label>Operador</label>
+      <input id="invOperator" type="text" />
 
-              <div class="hr"></div>
+      <label>Turno</label>
+      <select id="invShift">
+        <option value="">—</option>
+        <option>Manhã</option>
+        <option>Tarde</option>
+        <option>Noite</option>
+      </select>
 
-              <label id="invLblOperator">Operador</label>
-<input id="invOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
+      <label>Ponto</label>
+      <select id="invPoint">
+        <option value="">—</option>
+        <option>M1-A1</option><option>M1-A2</option>
+        <option>M2-A1</option><option>M2-A2</option>
+        <option>M3-A1</option><option>M3-A2</option>
+      </select>
 
+      <label>Fase</label>
+      <select id="invPhase">
+        <option>M1</option>
+        <option>M2</option>
+        <option>M3</option>
+      </select>
 
-              <label id="invLblShift">Turno</label>
-              <select id="invShift">
-                <option value="">—</option>
-                <option>Manhã</option><option>Tarde</option><option>Noite</option>
-              </select>
+      <label>Temperatura (°C)</label>
+      <input id="invT" type="number" />
 
-              <label id="invLblPoint">Ponto</label>
-              <select id="invPoint">
-                <option value="">—</option>
-                <option>M1-A1</option><option>M1-A2</option><option>M1-B1</option>
-                <option>M2-A1</option><option>M2-A2</option><option>M2-B1</option>
-                <option>M3-A1</option><option>M3-A2</option><option>M3-B1</option>
-              </select>
+      <label>UR (%)</label>
+      <input id="invRH" type="number" />
 
-              <div class="hr"></div>
+      <label>PAR</label>
+      <input id="invPAR" type="number" />
 
-              <label id="invLblPhase">Fase</label>
-              <select id="invPhase">
-                <option value="M1">M1</option>
-                <option value="M2">M2</option>
-                <option value="M3">M3</option>
-              </select>
+      <div class="row" style="margin-top:12px;justify-content:space-between">
+        <button class="btn btnPrimary" id="invCalc">Calcular</button>
+        <button class="btn" id="invBack">Voltar</button>
+      </div>
+    </div>
 
-              <label id="invLblT">Temperatura do ar (°C)</label>
-              <input id="invT" type="number" step="0.1" placeholder="Ex: 28.0" />
+    <!-- INVERNADERO: RESULTADO -->
+    <div class="card half">
+      <h3>Resultado</h3>
 
-              <label id="invLblRH">Umidade relativa (%)</label>
-              <input id="invRH" type="number" step="1" placeholder="Ex: 70" />
+      <div class="big" id="invVPD">—</div>
+      <div class="badge ok" id="invBadge">—</div>
 
-              <label id="invLblPAR">PAR (µmol·m⁻²·s⁻¹)</label>
-              <input id="invPAR" type="number" step="1" placeholder="Ex: 350" />
+      <div class="hr"></div>
 
-              <label id="invLblObs">Observação (lista)</label>
-              <select id="invObs">
-                <option value="">—</option>
-                <option>Ambiente pesado (pouca troca de ar)</option>
-                <option>Folha molhada / risco de fungo</option>
-                <option>Substrato seco / bandeja seca</option>
-                <option>Substrato encharcado</option>
-                <option>Uniformidade ruim (diferença entre bancadas)</option>
-                <option>Charcos no piso</option>
-                <option>Outros</option>
-              </select>
+      <div class="card" style="box-shadow:none">
+        <div id="invRecipe" class="muted">Preencha os dados.</div>
+      </div>
 
-              <div class="row" style="margin-top:12px;justify-content:space-between">
-                <button class="btn btnPrimary" id="invCalc">Calcular</button>
-                <button class="btn" id="invBack">Voltar</button>
-              </div>
+      <div class="hr"></div>
 
-              <p class="muted" style="margin-top:10px" id="invTip">
-                Dica: use o pior ponto da fase como referência (evita subestimar estresse).
-              </p>
-            </div>
+      <div class="card" style="box-shadow:none">
+        <label><input type="checkbox" id="invChkVent"> Ventilação ajustada</label>
+        <label><input type="checkbox" id="invChkMalla"> Malla aplicada</label>
+        <label><input type="checkbox" id="invChkFog"> Nebulização OK</label>
+        <label><input type="checkbox" id="invChkFloor"> Piso OK</label>
+      </div>
 
-            <!-- INVERNADERO: RESULTADO -->
-            <div class="card half">
-              <h3 id="invOutTitle">Invernadero — Resultado</h3>
+      <div class="hr"></div>
 
-              <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
-                <div>
-                  <div class="muted" id="invVpdLbl">VPD (kPa)</div>
-                  <div class="big" id="invVPD">—</div>
-                </div>
-                <div>
-                  <div class="badge ok" id="invBadge">—</div>
-                </div>
-              </div>
+      <div class="pill" id="invTimerPill">Rechecagem: —</div>
 
-              <div class="hr"></div>
+      <div class="row" style="margin-top:12px;justify-content:space-between">
+        <button class="btn btnPrimary" id="invSave" disabled>Registrar</button>
+        <button class="btn btnDanger" id="invReset">Limpar</button>
+      </div>
+    </div>
 
-              <h3 style="margin:0 0 8px 0" id="invRecTitle">Recomendação por fase</h3>
-              <div class="card" style="box-shadow:none;border-radius:14px" id="invRecipeBox">
-                <div class="muted" id="invRecipe">Preencha os dados e clique em “Calcular”.</div>
-              </div>
-              <div class="hr"></div>
-
-<h3 style="margin:0 0 8px 0">Programa de irrigação (casa de vegetação)</h3>
-
-<div class="card" style="box-shadow:none;border-radius:14px">
-  <div class="muted" style="margin-bottom:6px">
-    Programa atual (automático por horário): <b id="invIrrigNow">—</b>
   </div>
-
-  <div class="muted" style="margin-bottom:8px">
-    Recomendação do app: <b id="invIrrigRec">—</b>
-  </div>
-
-  <label style="margin-top:0">Programa executado (operador)</label>
-  <select id="invIrrigChosen">
-    <option value="">—</option>
-  </select>
-
-  <p class="muted" style="margin:8px 0 0">
-    *Se escolher diferente do recomendado, registre em “Observação”.
-  </p>
 </div>
 
 
-              <div class="hr"></div>
-
-              <h3 style="margin:0 0 8px 0" id="invChecklistTitle">Checklist obrigatório</h3>
-              <div class="card" style="box-shadow:none;border-radius:14px">
-                <label><input type="checkbox" id="invChkVent" /> <span id="invChkVentTxt">Ventilação ajustada (cenital/laterais)</span></label>
-                <label><input type="checkbox" id="invChkMalla" /> <span id="invChkMallaTxt">Malla / Sombrite aplicada (0/30/50/70)</span></label>
-                <label><input type="checkbox" id="invChkFog" /> <span id="invChkFogTxt">Nebulização (Sim/Não) conferida</span></label>
-                <label><input type="checkbox" id="invChkFloor" /> <span id="invChkFloorTxt">Piso sem charcos / manejo correto</span></label>
-              </div>
-
-              <div class="hr"></div>
-
-              <div class="pill" id="invTimerPill">Rechecagem: —</div>
-
-              <div class="row" style="margin-top:12px;justify-content:space-between">
-                <button class="btn btnPrimary" id="invSave" disabled>Registrar ação</button>
-                <button class="btn btnDanger" id="invReset">Limpar</button>
-              </div>
-
-              <p class="muted" style="margin-top:10px" id="invAuditHint">
-                Registro só libera após cálculo + checklist completo.
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </div>
-
       <!-- HISTÓRICO -->
-      <div id="screenHist" class="page">
-        <div class="pageInner">
-          <div class="row">
-            <div class="card grow">
-              <h3 id="histTitle">Histórico</h3>
-              <p class="muted" id="histDesc">
-                Registros ficam salvos neste dispositivo (LocalStorage). Exporte para Excel (CSV).
-              </p>
+      <div class="pageInner">
+  <div class="card grow">
+    <h3>Histórico</h3>
 
-              <div class="hr"></div>
+    <div class="row" style="margin-bottom:10px">
+      <button class="btn" id="histExport">Exportar CSV</button>
+      <button class="btn btnDanger" id="histClear">Limpar</button>
+      <div class="pill" id="histCount">0 registros</div>
+    </div>
 
-              <div class="row" style="justify-content:space-between;align-items:center">
-                <div class="row">
-                  <button class="btn" id="histExport">Exportar CSV</button>
-                  <button class="btn btnDanger" id="histClear">Limpar histórico</button>
-                </div>
-                <div class="pill" id="histCount">0 registros</div>
-              </div>
+    <div style="overflow:auto">
+      <table style="width:100%">
+        <thead>
+          <tr>
+            <th>Data</th>
+            <th>Setor</th>
+            <th>Operador</th>
+            <th>VPD</th>
+            <th>Ações</th>
+          </tr>
+        </thead>
+        <tbody id="histBody"></tbody>
+      </table>
+    </div>
 
-              <div class="hr"></div>
+    <div class="hr"></div>
+    <button class="btn" id="histBack">Voltar</button>
+  </div>
+</div>
 
-              <div style="overflow:auto">
-                <table style="width:100%;border-collapse:collapse">
-                  <thead>
-                    <tr>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Data/Hora</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Setor</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Fase</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Operador</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Turno</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ponto</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">T (°C)</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">UR (%)</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">PAR</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">VPD</th>
-                      <th style="text-align:left;padding:8px 6px;border-bottom:1px solid var(--line);color:var(--muted);font-size:12px">Ações/Obs</th>
-                    </tr>
-                  </thead>
-                  <tbody id="histBody"></tbody>
-                </table>
-              </div>
-
-              <p class="muted" style="margin-top:10px" id="histNote">
-                Para auditoria, cada registro guarda leituras + ações + observação escolhida.
-              </p>
-
-              <div class="hr"></div>
-              <button class="btn" id="histBack">Voltar</button>
-            </div>
-          </div>
-        </div>
-      </div>
 
       <!-- SOP -->
       <div id="screenSOP" class="page">
@@ -595,8 +488,8 @@
       </div>
 
     </div>
-  </div>
 
+   
 <script>
   // =========================
   // Helpers
