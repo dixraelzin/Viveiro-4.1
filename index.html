@@ -902,37 +902,6 @@ function recommendIrrProgram(bandKey, currentId){
 }
 
 
-function currentIrrProgram(){
-  const h = new Date().getHours();
-  for (const [a,b,name] of IRR_SCHEDULE){
-    if (h >= a && h < b) return name;
-  }
-  return IRR_SCHEDULE[0][2];
-}
-
-// Preenche select de escolha do operador (uma vez)
-function fillIrrigSelect(){
-  const sel = $("invIrrigChosen");
-  if (!sel || sel.dataset.ready === "1") return;
-
-  // limpa e recria mantendo o "—"
-  const first = sel.querySelector('option[value=""]') ? sel.querySelector('option[value=""]') : null;
-  sel.innerHTML = "";
-  const opt0 = document.createElement("option");
-  opt0.value = "";
-  opt0.textContent = "—";
-  sel.appendChild(opt0);
-
-  IRR_PROGRAM_LIST.forEach(p=>{
-    const o = document.createElement("option");
-    o.value = p;
-    o.textContent = p;
-    sel.appendChild(o);
-  });
-
-  sel.dataset.ready = "1";
-}
-
   function vpdBand(vpd){
     if (vpd <= 0.6) return {key:"wet", cls:"warn"};
     if (vpd <= 1.2) return {key:"ok", cls:"ok"};
@@ -1588,11 +1557,7 @@ band: invLast.bandKey || "",
 actions: `${actionsExec} || ${actionsRec}`,
 
     });
-    // Ativa UX nos dois setores
-bindEnterFlow("min");
-bindEnterFlow("inv");
-updateCalcButtons();
-
+   
 // Quando troca idioma, revalida botões
 const _oldApplyLang = applyLang;
 applyLang = function(){
@@ -1601,6 +1566,10 @@ applyLang = function(){
 };
 
   };
+  bindEnterFlow("min");
+bindEnterFlow("inv");
+updateCalcButtons();
+
 
   renderHist();
 
