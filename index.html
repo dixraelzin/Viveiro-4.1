@@ -286,16 +286,9 @@
           <input id="minOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
 
           <label id="lblShift">Turno</label>
-          <select id="minShift">
+          <select id="minShift" data-auto="1">
             <option value="">—</option>
             <option>Manhã</option><option>Tarde</option><option>Noite</option>
-          </select>
-
-          <label id="lblPoint">Ponto</label>
-          <select id="minPoint">
-            <option value="">—</option>
-            <option>A1</option><option>A2</option><option>A3</option>
-            <option>B1</option><option>B2</option><option>B3</option>
           </select>
 
           <div class="hr"></div>
@@ -398,17 +391,9 @@
         <input id="invOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
 
         <label id="invLblShift">Turno</label>
-        <select id="invShift">
+        <select id="invShift" data-auto="1">
           <option value="">—</option>
           <option>Manhã</option><option>Tarde</option><option>Noite</option>
-        </select>
-
-        <label id="invLblPoint">Ponto</label>
-        <select id="invPoint">
-          <option value="">—</option>
-          <option>M1-A1</option><option>M1-A2</option><option>M1-B1</option>
-          <option>M2-A1</option><option>M2-A2</option><option>M2-B1</option>
-          <option>M3-A1</option><option>M3-A2</option><option>M3-B1</option>
         </select>
 
         <div class="hr"></div>
@@ -786,7 +771,8 @@ setTimeout(()=>{
   if (id === "screenMin") { try{ focusFirstMissing("min"); } catch(e){} }
   if (id === "screenInv") { try{ focusFirstMissing("inv"); } catch(e){} }
 }, 50);
-
+    
+    if (id === "screenInv") fillIrrigSelect();
     if (id === "screenHist") renderHist();
     if (id === "screenSOP") renderSOP();
   }
@@ -828,6 +814,33 @@ setTimeout(()=>{
 // IRRIGAÇÃO — Programas reais do viveiro
 // Aspersor por timer + Fogger por sensor
 // =========================
+  function fillIrrigSelect(){
+  const sel = document.getElementById("invIrrigChosen");
+  if (!sel) return;
+
+  // Evita duplicar opções
+  if (sel.dataset.filled === "1") return;
+
+  sel.innerHTML = `<option value="">—</option>` + IRR_PROGRAMS.map(p=>{
+    const txt = `${p.id} — ${p.label} (${p.on}s / ${p.interval ?? "-"} min)`;
+    return `<option value="${p.id}">${txt}</option>`;
+  }).join("");
+
+  sel.dataset.filled = "1";
+}
+
+function currentIrrProgram(dateObj=new Date()){
+  const h = dateObj.getHours() + dateObj.getMinutes()/60;
+
+  // pega programa pelo intervalo
+  let p = IRR_PROGRAMS.find(x => h >= x.start && h < x.end);
+
+  // fallback seguro (se cair fora de todos)
+  if (!p) p = IRR_PROGRAMS[IRR_PROGRAMS.length - 1];
+
+  return p;
+}
+
 
 const IRR_PROGRAMS = [
   { id:"P1", start:8.0,  end:10.0, label:"P1 — Arranque suave", 
@@ -905,9 +918,9 @@ function recommendIrrProgram(bandKey, currentId){
 // =========================
 function getRequiredFields(sector){
   if (sector === "min"){
-    return ["minOperator","minShift","minPoint","minT","minRH","minPAR"];
+    return ["minOperator","minShift","minT","minRH","minPAR"];
   }
-  return ["invOperator","invShift","invPoint","invPhase","invT","invRH","invPAR"];
+  return ["invOperator","invShift","invPhase","invT","invRH","invPAR"];
 }
 
 function firstMissingField(sector){
@@ -1020,8 +1033,6 @@ function unusualWarnings(T, RH, PAR){
   function minFieldsOk(){
     if (!isFilledField("minOperator")) return false;
 if (!isFilledField("minShift")) return false;
-if (!isFilledField("minPoint")) return false;
-
 
     const T = parseNum("minT"), RH = parseNum("minRH"), PAR = parseNum("minPAR");
     if (!Number.isFinite(T) || !Number.isFinite(RH) || !Number.isFinite(PAR)) return false;
@@ -1034,9 +1045,7 @@ if (!isFilledField("minPoint")) return false;
 
   function invFieldsOk(){
     if (!isFilledField("invOperator")) return false;
-if (!isFilledField("invShift")) return false;
-if (!isFilledField("invPoint")) return false;
-
+    if (!isFilledField("invShift")) return false;
 
     const phase = $("invPhase").value;
     if (!phase) return false;
@@ -1369,6 +1378,28 @@ if (!$("invIrrigChosen").value){
 
     updateSaveLocks();
   };
+  function shiftByHour(dateObj=new Date()){
+  const h = dateObj.getHours();
+  if (h >= 6 && h <= 12) return "Manhã";
+  if (h >= 12 && h <= 21) return "Tarde";
+  return "Noite";
+}
+
+function applyAutoShift(){
+  const val = shiftByHour(new Date());
+
+  const min = document.getElementById("minShift");
+  const inv = document.getElementById("invShift");
+
+  // Só preenche se estiver vazio OU se estiver marcado como auto
+  if (min && (min.value === "" || min.dataset.auto === "1")) min.value = val;
+  if (inv && (inv.value === "" || inv.dataset.auto === "1")) inv.value = val;
+}
+
+// aplica ao carregar e atualiza a cada 30s (pega mudança de turno)
+applyAutoShift();
+setInterval(applyAutoShift, 30000);
+
 
   // =========================
   // Histórico + CSV
@@ -1402,7 +1433,6 @@ if (!$("invIrrigChosen").value){
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.phase || "—"}</td>
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.operator}</td>
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.shift}</td>
-    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.point}</td>
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.T}</td>
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.RH}</td>
     <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.PAR}</td>
@@ -1471,7 +1501,6 @@ const actionsRec = minLast.rec
       phase: "",
       operator: $("minOperator").value,
       shift: $("minShift").value,
-      point: $("minPoint").value,
       T: $("minT").value,
       RH: $("minRH").value,
       PAR: $("minPAR").value,
@@ -1503,7 +1532,6 @@ const actionsRec = invLast.rec
       phase: $("invPhase").value,
       operator: $("invOperator").value,
       shift: $("invShift").value,
-      point: $("invPoint").value,
       T: $("invT").value,
       RH: $("invRH").value,
       PAR: $("invPAR").value,
