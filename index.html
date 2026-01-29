@@ -177,6 +177,29 @@
       pointer-events:auto;
     }
     .pageInner{max-width:1200px;margin:0 auto;}
+    /* Aviso de atenção */
+.warnBox{
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  background:rgba(245,158,11,.12);
+  border:1px solid rgba(245,158,11,.35);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:13px;
+  color:#92400e;
+}
+
+.warnIcon{
+  font-size:20px;
+  line-height:1;
+}
+
+.warnText b{
+  display:block;
+  margin-bottom:2px;
+}
+
   </style>
 </head>
 
@@ -885,6 +908,31 @@ let invLast = { vpd:null, bandKey:null, rec:null };
     $("invTimerPill").textContent = `${t("recheck")}: —`;
     invLast.vpd = null;
     updateSaveLocks();
+    // =========================
+// Aviso de valores incomuns (não bloqueante)
+// =========================
+function unusualWarnings(T, RH, PAR){
+  const warns = [];
+
+  if (T > 45) warns.push(LANG==="es"
+    ? "⚠️ Temperatura muy alta. Verifica sensor."
+    : "⚠️ Temperatura muito alta. Verifique o sensor.");
+
+  if (RH < 10) warns.push(LANG==="es"
+    ? "⚠️ Humedad muy baja. Confirma lectura."
+    : "⚠️ Umidade muito baixa. Confirme a leitura.");
+
+  if (RH > 98) warns.push(LANG==="es"
+    ? "⚠️ Humedad muy alta. Riesgo de condensación."
+    : "⚠️ Umidade muito alta. Risco de condensação.");
+
+  if (PAR > 2000) warns.push(LANG==="es"
+    ? "⚠️ PAR extremadamente alto. Confirma calibración."
+    : "⚠️ PAR extremamente alto. Confirme calibração.");
+
+  return warns;
+}
+
   };
 
   // ===== Recomendação MINIJARDIM =====
@@ -1074,7 +1122,24 @@ invLast.rec = {
     $("minBadge").className = `badge ${b.cls}`;
     $("minBadge").textContent = bandLabel(b.key);
 
-    $("minRecipe").innerHTML = minRecipeFull(vpd, PAR);
+    const warns = unusualWarnings(T, RH, PAR);
+let warnHTML = "";
+if (warns.length){
+  warnHTML = `
+    <div class="hr"></div>
+    <div class="warnBox">
+      <div class="warnIcon">⚠️</div>
+      <div class="warnText">
+        <b>${LANG==="es" ? "ATENCIÓN" : "ATENÇÃO"}</b>
+        ${warns.join("<br>")}
+      </div>
+    </div>
+  `;
+}
+
+
+$("minRecipe").innerHTML = minRecipeFull(vpd, PAR) + warnHTML;
+
 
     const mins = (vpd > 1.6) ? 5 : (vpd > 1.2) ? 10 : (vpd < 0.6) ? 15 : 20;
     $("minTimerPill").textContent = `${t("recheck")}: ${mins} min`;
@@ -1097,7 +1162,24 @@ invLast.rec = {
     $("invVPD").textContent = vpd.toFixed(2);
 
     const r = invRecipeFull(phase, vpd, PAR);
-    $("invRecipe").innerHTML = r.html;
+    const warns = unusualWarnings(T, RH, PAR);
+let warnHTML = "";
+if (warns.length){
+  warnHTML = `
+    <div class="hr"></div>
+    <div class="warnBox">
+      <div class="warnIcon">⚠️</div>
+      <div class="warnText">
+        <b>${LANG==="es" ? "ATENCIÓN" : "ATENÇÃO"}</b>
+        ${warns.join("<br>")}
+      </div>
+    </div>
+  `;
+}
+
+
+$("invRecipe").innerHTML = r.html + warnHTML;
+
 
     $("invBadge").className = `badge ${r.bandCls}`;
     $("invBadge").textContent = bandLabel(r.bandKey);
@@ -1207,6 +1289,9 @@ const actionsRec = minLast.rec
       VPD: minLast.vpd.toFixed(2),
       obs: $("minObs").value,
       sopVersion: SOP_VERSION,
+      band: bandLabel(minLast.bandKey),
+      recommendation: JSON.stringify(minLast.rec),
+
 band: minLast.bandKey || "",
 actions: `${actionsExec} || ${actionsRec}`,
 
@@ -1236,6 +1321,9 @@ const actionsRec = invLast.rec
       VPD: invLast.vpd.toFixed(2),
       obs: $("invObs").value,
       sopVersion: SOP_VERSION,
+      band: bandLabel(invLast.bandKey),
+      recommendation: JSON.stringify(invLast.rec),
+
 band: invLast.bandKey || "",
 actions: `${actionsExec} || ${actionsRec}`,
 
