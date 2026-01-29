@@ -262,11 +262,10 @@
 
               <div class="hr"></div>
 
-              <label id="lblOperator">Operador</label>
-              <select id="minOperator">
-                <option value="">—</option>
-                <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
-              </select>
+             <label id="lblOperator">Operador</label>
+<input id="minOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
+
+        
 
               <label id="lblShift">Turno</label>
               <select id="minShift">
@@ -378,10 +377,8 @@
               <div class="hr"></div>
 
               <label id="invLblOperator">Operador</label>
-              <select id="invOperator">
-                <option value="">—</option>
-                <option>Ana</option><option>Bruno</option><option>Carla</option><option>Diego</option>
-              </select>
+<input id="invOperator" type="text" placeholder="Digite o nome" autocomplete="off" />
+
 
               <label id="invLblShift">Turno</label>
               <select id="invShift">
@@ -559,6 +556,74 @@
     const d = new Date();
     return `${d.getFullYear()}-${pad2(d.getMonth()+1)}-${pad2(d.getDate())} ${pad2(d.getHours())}:${pad2(d.getMinutes())}:${pad2(d.getSeconds())}`;
   }
+  // =========================
+// FASE A — Segurança de inputs numéricos (anti-letra) + limites
+// =========================
+function sanitizeNumericInput(el){
+  // Permite: dígitos, 1 sinal -, 1 separador decimal (ponto ou vírgula)
+  let s = String(el.value ?? "");
+
+  // Remove tudo que não for dígito, ponto, vírgula ou -
+  s = s.replace(/[^\d.,-]/g, "");
+
+  // Se tiver mais de um "-", mantém só o primeiro e só se estiver no começo
+  s = s.replace(/(?!^)-/g, "");
+
+  // Se tiver ponto e vírgula, escolhe o último usado como decimal e remove o outro
+  const lastDot = s.lastIndexOf(".");
+  const lastComma = s.lastIndexOf(",");
+  if (lastDot !== -1 && lastComma !== -1){
+    if (lastDot > lastComma){
+      // ponto é decimal, remove vírgulas
+      s = s.replace(/,/g, "");
+    } else {
+      // vírgula é decimal, remove pontos
+      s = s.replace(/\./g, "");
+    }
+  }
+
+  // Se tiver mais de 1 separador decimal (ponto OU vírgula), mantém só o primeiro (da esquerda)
+  const partsDot = s.split(".");
+  if (partsDot.length > 2){
+    s = partsDot[0] + "." + partsDot.slice(1).join("");
+  }
+  const partsComma = s.split(",");
+  if (partsComma.length > 2){
+    s = partsComma[0] + "," + partsComma.slice(1).join("");
+  }
+
+  el.value = s;
+}
+
+function bindNumeric(id){
+  const el = $(id);
+  if (!el) return;
+  // Deixa teclado numérico no celular
+  el.setAttribute("inputmode", "decimal");
+  el.setAttribute("autocomplete", "off");
+  // Sanitiza enquanto digita/cola
+  el.addEventListener("input", ()=>sanitizeNumericInput(el));
+  // Bloqueia letras no teclado (extra)
+  el.addEventListener("keydown", (e)=>{
+    const ok =
+      e.ctrlKey || e.metaKey ||
+      ["Backspace","Delete","Tab","Enter","Escape","ArrowLeft","ArrowRight","Home","End"].includes(e.key) ||
+      /^[0-9]$/.test(e.key) || e.key === "." || e.key === "," || e.key === "-";
+    if (!ok) e.preventDefault();
+  });
+}
+
+function parseNumStrict(id){
+  const el = $(id);
+  if (!el) return NaN;
+  let s = String(el.value ?? "").trim();
+  if (!s) return NaN;
+  // converte vírgula para ponto
+  s = s.replace(",", ".");
+  const v = Number(s);
+  return Number.isFinite(v) ? v : NaN;
+}
+
 
   // =========================
   // i18n (PT/ES)
@@ -700,6 +765,9 @@
   tickClock();
   setInterval(tickClock, 1000);
   showScreen("screenHome");
+  // FASE A: ativa proteção anti-letra nos campos numéricos
+["minT","minRH","minPAR","invT","invRH","invPAR"].forEach(bindNumeric);
+
 </script>
 
 <script>
@@ -733,17 +801,24 @@
   }
 
   function parseNum(id){
+  return parseNumStrict(id);
+}
+
     const v = parseFloat($(id).value);
     return Number.isFinite(v) ? v : NaN;
   }
-  function isFilledSelect(id){
-    return String($(id).value || "").trim() !== "";
+  function isFilledField(id){
+  const el = $(id);
+  return !!el && String(el.value || "").trim() !== "";
+}
+
   }
 
   function minFieldsOk(){
-    if (!isFilledSelect("minOperator")) return false;
-    if (!isFilledSelect("minShift")) return false;
-    if (!isFilledSelect("minPoint")) return false;
+    if (!isFilledField("minOperator")) return false;
+if (!isFilledField("minShift")) return false;
+if (!isFilledField("minPoint")) return false;
+
 
     const T = parseNum("minT"), RH = parseNum("minRH"), PAR = parseNum("minPAR");
     if (!Number.isFinite(T) || !Number.isFinite(RH) || !Number.isFinite(PAR)) return false;
@@ -755,9 +830,10 @@
   }
 
   function invFieldsOk(){
-    if (!isFilledSelect("invOperator")) return false;
-    if (!isFilledSelect("invShift")) return false;
-    if (!isFilledSelect("invPoint")) return false;
+    if (!isFilledField("invOperator")) return false;
+if (!isFilledField("invShift")) return false;
+if (!isFilledField("invPoint")) return false;
+
 
     const phase = $("invPhase").value;
     if (!phase) return false;
@@ -771,8 +847,11 @@
     return true;
   }
 
-  let minLast = { vpd:null };
-  let invLast = { vpd:null };
+  const SOP_VERSION = "SOP_v1.0_FaseA";
+
+let minLast = { vpd:null, bandKey:null, rec:null };
+let invLast = { vpd:null, bandKey:null, rec:null };
+
 
   function updateSaveLocks(){
     const minChecklistOK = $("minChkCen").checked && $("minChkLat").checked && $("minChkMalla").checked && $("minChkFloor").checked;
@@ -853,6 +932,16 @@
       : ["✖ Proibido molhar teto/plástico para baixar temperatura.",
          "✖ Proibido deixar charcos em passagens/piso.",
          "✖ Proibido cortina aberta com cenital fechada em dia quente."];
+    // guarda recomendação para auditoria (FASE A)
+minLast.bandKey = band.key;
+minLast.rec = {
+  lucarna: cen,
+  laterais: lat,
+  malla: `${m.lvl}%`,
+  piso: piso,
+  recheck: $("minTimerPill")?.textContent || "",
+};
+
 
     return `
       <b>${LANG==="es"?"Ajuste recomendado":"Ajuste recomendado"}</b><br>
@@ -919,6 +1008,13 @@
     noDo.push(LANG==="es"
       ? "✖ Prohibido decisiones sin checklist completo."
       : "✖ Proibido decisão sem checklist completo.");
+    invLast.bandKey = b.key;
+invLast.rec = {
+  fase: phase,
+  malla: `${m.lvl}%`,
+  recheckMin: recheckMin
+};
+
 
     return { html: `
       ${phaseLine}
@@ -1093,7 +1189,13 @@
   // Save MIN
   $("minSave").onclick = ()=>{
     if (!Number.isFinite(minLast.vpd)) return;
-    const actions = `Cenital✔ | Laterais✔ | Malla✔ | Piso✔`;
+    const actionsExec =
+  `Lucarna✔ | Laterais✔ | Malla✔ | Piso✔`;
+
+const actionsRec = minLast.rec
+  ? `REC: Lucarna ${minLast.rec.lucarna} | Laterais ${minLast.rec.laterais} | Malla ${minLast.rec.malla} | Piso ${minLast.rec.piso}`
+  : "REC: —";
+
     addRecord({
       ts: nowISO(),
       sector: (LANG==="es"?"Minijardín":"Minijardim"),
@@ -1106,14 +1208,24 @@
       PAR: $("minPAR").value,
       VPD: minLast.vpd.toFixed(2),
       actions,
-      obs: $("minObs").value
+      obs: $("minObs").value,
+      sopVersion: SOP_VERSION,
+band: minLast.bandKey || "",
+actions: `${actionsExec} || ${actionsRec}`,
+
     });
   };
 
   // Save INV
   $("invSave").onclick = ()=>{
     if (!Number.isFinite(invLast.vpd)) return;
-    const actions = `Vent✔ | Malla✔ | Neb✔ | Piso✔`;
+    const actionsExec =
+  `Vent✔ | Malla✔ | Neb✔ | Piso✔`;
+
+const actionsRec = invLast.rec
+  ? `REC: Fase ${invLast.rec.fase} | Malla ${invLast.rec.malla} | Recheck ${invLast.rec.recheckMin} min`
+  : "REC: —";
+
     addRecord({
       ts: nowISO(),
       sector: (LANG==="es"?"Invernadero":"Invernadero"),
@@ -1126,7 +1238,11 @@
       PAR: $("invPAR").value,
       VPD: invLast.vpd.toFixed(2),
       actions,
-      obs: $("invObs").value
+      obs: $("invObs").value,
+      sopVersion: SOP_VERSION,
+band: invLast.bandKey || "",
+actions: `${actionsExec} || ${actionsRec}`,
+
     });
   };
 
@@ -1192,6 +1308,7 @@
     `;
     $("sopBack").onclick = ()=>showScreen("screenHome");
   }
+
 </script>
 
 </body>
