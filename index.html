@@ -761,6 +761,12 @@ function parseNumStrict(id){
     document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
     const page = document.getElementById(id);
     if (page) page.classList.add("active");
+    // Auto-foco no primeiro campo obrigatório ao abrir a tela
+setTimeout(()=>{
+  if (id === "screenMin") { try{ focusFirstMissing("min"); } catch(e){} }
+  if (id === "screenInv") { try{ focusFirstMissing("inv"); } catch(e){} }
+}, 50);
+
     if (id === "screenHist") renderHist();
     if (id === "screenSOP") renderSOP();
   }
@@ -832,6 +838,95 @@ function parseNumStrict(id){
     const el = $(id);
     return !!el && String(el.value || "").trim() !== "";
   }
+  // =========================
+// UX (Opção 4) — ENTER avança + auto-foco + botão calcular inteligente
+// =========================
+function getRequiredFields(sector){
+  if (sector === "min"){
+    return ["minOperator","minShift","minPoint","minT","minRH","minPAR"];
+  }
+  return ["invOperator","invShift","invPoint","invPhase","invT","invRH","invPAR"];
+}
+
+function firstMissingField(sector){
+  const ids = getRequiredFields(sector);
+  for (const id of ids){
+    const el = $(id);
+    if (!el) continue;
+    // select vazio ou input vazio
+    if (String(el.value || "").trim() === "") return id;
+    // se for numérico, precisa ser finito
+    if (id.endsWith("T") || id.endsWith("RH") || id.endsWith("PAR")){
+      const v = parseNum(id);
+      if (!Number.isFinite(v)) return id;
+    }
+  }
+  return null;
+}
+
+function focusFirstMissing(sector){
+  const miss = firstMissingField(sector);
+  if (miss){
+    $(miss).focus();
+    return true;
+  }
+  return false;
+}
+
+function updateCalcButtons(){
+  const minOK = minFieldsOk();
+  const invOK = invFieldsOk();
+
+  const bMin = $("minCalc");
+  const bInv = $("invCalc");
+
+  if (bMin){
+    bMin.disabled = !minOK;
+    bMin.style.opacity = minOK ? "1" : ".55";
+    bMin.style.cursor = minOK ? "pointer" : "not-allowed";
+    bMin.title = minOK ? "" : (LANG==="es" ? "Completa los campos obligatorios" : "Complete os campos obrigatórios");
+  }
+  if (bInv){
+    bInv.disabled = !invOK;
+    bInv.style.opacity = invOK ? "1" : ".55";
+    bInv.style.cursor = invOK ? "pointer" : "not-allowed";
+    bInv.title = invOK ? "" : (LANG==="es" ? "Completa los campos obligatorios" : "Complete os campos obrigatórios");
+  }
+}
+
+function bindEnterFlow(sector){
+  const ids = getRequiredFields(sector);
+  ids.forEach((id, idx)=>{
+    const el = $(id);
+    if (!el) return;
+
+    el.addEventListener("keydown", (e)=>{
+      if (e.key !== "Enter") return;
+      e.preventDefault();
+
+      // Se ainda tem faltando, vai pro primeiro faltando
+      const miss = firstMissingField(sector);
+      if (miss){
+        $(miss).focus();
+        return;
+      }
+
+      // Se está tudo OK: vai pro próximo campo, ou pro botão Calcular no final
+      const nextId = ids[idx+1];
+      if (nextId && $(nextId)){
+        $(nextId).focus();
+      } else {
+        const btn = sector === "min" ? $("minCalc") : $("invCalc");
+        btn?.focus();
+      }
+    });
+
+    // Sempre que digita/muda, atualiza botão
+    el.addEventListener("input", updateCalcButtons);
+    el.addEventListener("change", updateCalcButtons);
+  });
+}
+
   // =========================
 // Aviso de valores incomuns (não bloqueante)
 // =========================
@@ -1331,6 +1426,18 @@ band: invLast.bandKey || "",
 actions: `${actionsExec} || ${actionsRec}`,
 
     });
+    // Ativa UX nos dois setores
+bindEnterFlow("min");
+bindEnterFlow("inv");
+updateCalcButtons();
+
+// Quando troca idioma, revalida botões
+const _oldApplyLang = applyLang;
+applyLang = function(){
+  _oldApplyLang();
+  updateCalcButtons();
+};
+
   };
 
   renderHist();
