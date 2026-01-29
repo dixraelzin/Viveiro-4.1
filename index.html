@@ -868,6 +868,33 @@ function parseNumStrict(id){
     });
     $("clock").textContent = txt;
   }
+  function getAutoShift(){
+  const h = new Date().getHours();
+  if (h >= 6 && h < 12) return "Manhã";
+  if (h >= 12 && h < 18) return "Tarde";
+  return "Noite";
+}
+
+function setShiftIfEmpty(selectId){
+  const el = $(selectId);
+  if (!el) return;
+
+  // só preenche se estiver vazio
+  if (String(el.value || "").trim() !== "") return;
+
+  const wanted = getAutoShift();
+
+  // tenta bater por texto (mais robusto)
+  const opt = Array.from(el.options).find(o => o.text.trim() === wanted);
+  if (opt) el.value = opt.value;
+}
+
+// atualiza quando abre tela + periodicamente
+function applyAutoShift(){
+  setShiftIfEmpty("minShift");
+  setShiftIfEmpty("invShift");
+}
+
 
   // =========================
   // Navigation
@@ -885,6 +912,8 @@ setTimeout(()=>{
     if (id === "screenInv") fillIrrigSelect();
     if (id === "screenHist") renderHist();
     if (id === "screenSOP") renderSOP();
+    applyAutoShift();
+
   }
 
   // Wiring
@@ -912,6 +941,10 @@ setTimeout(()=>{
   showScreen("screenHome");
   // FASE A: ativa proteção anti-letra nos campos numéricos
 ["minT","minRH","minPAR","invT","invRH","invPAR"].forEach(bindNumeric);
+  // ===== Turno automático (MINIJARDIM + INVERNADERO) =====
+applyAutoShift();
+setInterval(applyAutoShift, 30 * 1000);
+
 
 </script>
 
@@ -1454,6 +1487,19 @@ $("minRecipe").innerHTML = minRecipeFull(vpd, PAR) + warnHTML;
     $("invVPD").textContent = vpd.toFixed(2);
 
     const r = invRecipeFull(phase, vpd, PAR);
+    // ===== HERO visual (VPD grande) — INVERNADERO =====
+$("invVPD").classList.remove("ok","warn","bad");
+
+if (r.bandKey === "ok") {
+  $("invVPD").classList.add("ok");
+}
+else if (r.bandKey === "warn" || r.bandKey === "wet") {
+  $("invVPD").classList.add("warn");
+}
+else { // crit
+  $("invVPD").classList.add("bad");
+}
+
     const warns = unusualWarnings(T, RH, PAR);
 let warnHTML = "";
 if (warns.length){
