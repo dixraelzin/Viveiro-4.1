@@ -257,34 +257,6 @@
               </p>
             </div>
 
-            <!-- CARD INFORMATIVO -->
-            <div class="card half">
-  <h3 id="homeInfoTitle">Padrão operacional</h3>
-
-  <div class="warnBox" style="margin:8px 0 10px">
-    <div class="warnIcon">⚠️</div>
-    <div class="warnText">
-      <b>Uso obrigatório no turno</b>
-      Padroniza decisão de microclima e registra ações para auditoria (reduz erro operacional).
-    </div>
-  </div>
-
-  <p class="muted" style="margin:0">
-    <b>Objetivo:</b> reduzir variação de manejo e evitar decisões impulsivas.<br>
-    <b>Como funciona:</b> leituras → VPD → recomendação (lucarna/laterais/malla) → checklist → registro.<br>
-    <b>Regra de ouro:</b> ventilação → sombreamento → água (só emergência) + registrar sempre.
-  </p>
-</div>
-
-                Ordem correta de controle ambiental:
-                <b>ventilação</b> → <b>sombreamento</b> → <b>água (apenas emergência)</b>.
-                Evite decisões impulsivas e sempre registre a ação.
-              </p>
-            </div>
-
-          </div>
-        </div>
-      </div>
 
       <!-- MINIJARDIM -->
       <div id="screenMin" class="page">
@@ -870,26 +842,7 @@ const IRR_PROGRAMS = [
     objetivo:"Secado y sanidad", on:0, intervalo:null }
 ];
 
-function currentIrrProgram(){
-  const d = new Date();
-  const h = d.getHours() + d.getMinutes()/60;
 
-  return IRR_PROGRAMS.find(p => h >= p.start && h < p.end) || IRR_PROGRAMS[0];
-}
-
-function fillIrrigSelect(){
-  const sel = $("invIrrigChosen");
-  if (!sel || sel.dataset.ready === "1") return;
-
-  sel.innerHTML = `<option value="">—</option>`;
-  IRR_PROGRAMS.forEach(p=>{
-    const o = document.createElement("option");
-    o.value = p.id;
-    o.textContent = `${p.id} — ${p.label}`;
-    sel.appendChild(o);
-  });
-  sel.dataset.ready = "1";
-}
 
 function recommendIrrProgram(bandKey, currentId){
   const idx = IRR_PROGRAMS.findIndex(p=>p.id===currentId);
@@ -1431,27 +1384,27 @@ if (!$("invIrrigChosen").value){
     $("histCount").textContent = `${arr.length} ${LANG==="es"?"registros":"registros"}`;
     const tb = $("histBody");
     tb.innerHTML = "";
-    arr.slice(0, 300).forEach(r=>{
-      const tr = document.createElement("tr");
-      tr.innerHTML = `
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.ts}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.sector}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.phase || "—"}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.operator}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.shift}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.point}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.T}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.RH}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.PAR}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.VPD}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">
-  ${r.actions} · ${r.obs || ""}<br>
-  <span class="muted">Irrig: ${r.irrigChosen || "—"} (Now: ${r.irrigNow || "—"} | Rec: ${r.irrigRec || "—"})</span>
-</td>
+   arr.slice(0, 300).forEach(r=>{
+  const tr = document.createElement("tr");
+  tr.innerHTML = `
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.ts}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.sector}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.phase || "—"}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.operator}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.shift}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.point}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.T}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.RH}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.PAR}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.VPD}</td>
+    <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">
+      ${r.actions || ""} · ${r.obs || ""}<br>
+      <span class="muted">Irrig: ${r.irrigChosen || "—"} (Now: ${r.irrigNow || "—"} | Rec: ${r.irrigRec || "—"})</span>
+    </td>
+  `;
+  tb.appendChild(tr);
+});
 
-      tb.appendChild(tr);
-    });
-  }
 
   function exportCSV(){
     const arr = loadHist();
