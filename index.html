@@ -799,21 +799,19 @@ function parseNumStrict(id){
     const svp = 0.6108 * Math.exp((17.27 * T) / (T + 237.3));
     return svp * (1 - (RH/100));
   }
-
+  // Usa o parser estrito (aceita vírgula e bloqueia lixo)
   function parseNum(id){
-  return parseNumStrict(id);
-}
-
-    const v = parseFloat($(id).value);
-    return Number.isFinite(v) ? v : NaN;
+    return parseNumStrict(id);
   }
+
+  // Checa se campo (input ou select) está preenchido
   function isFilledField(id){
-  const el = $(id);
-  return !!el && String(el.value || "").trim() !== "";
-}
-
+    const el = $(id);
+    return !!el && String(el.value || "").trim() !== "";
   }
 
+ 
+ 
   function minFieldsOk(){
     if (!isFilledField("minOperator")) return false;
 if (!isFilledField("minShift")) return false;
@@ -1207,7 +1205,6 @@ const actionsRec = minLast.rec
       RH: $("minRH").value,
       PAR: $("minPAR").value,
       VPD: minLast.vpd.toFixed(2),
-      actions,
       obs: $("minObs").value,
       sopVersion: SOP_VERSION,
 band: minLast.bandKey || "",
@@ -1237,7 +1234,6 @@ const actionsRec = invLast.rec
       RH: $("invRH").value,
       PAR: $("invPAR").value,
       VPD: invLast.vpd.toFixed(2),
-      actions,
       obs: $("invObs").value,
       sopVersion: SOP_VERSION,
 band: invLast.bandKey || "",
