@@ -199,9 +199,111 @@
   display:block;
   margin-bottom:2px;
 }
+    /* ===== UX PREMIUM + FAST ===== */
+:root{
+  --radius:18px;
+  --radius2:14px;
+}
+
+/* Header mais “app” */
+.top{
+  position:sticky;
+  top:0;
+  z-index:50;
+  background:rgba(246,248,255,.82);
+  backdrop-filter: blur(10px);
+  border-bottom:1px solid var(--line);
+  padding:10px 0;
+}
+
+/* Cards: mais consistentes */
+.card{
+  border-radius:var(--radius);
+}
+.card h3{font-size:15.5px}
+
+/* Botão primário com “press” */
+.btn{transition:transform .06s ease, filter .12s ease}
+.btn:active{transform:scale(.98)}
+
+/* HERO do VPD (premium) */
+.vpdHero{
+  display:flex;
+  align-items:flex-end;
+  justify-content:space-between;
+  gap:12px;
+  padding:12px 14px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  background:#fff;
+}
+.vpdHero.ok{ box-shadow:0 10px 22px rgba(22,163,74,.10) }
+.vpdHero.warn{ box-shadow:0 10px 22px rgba(245,158,11,.12) }
+.vpdHero.bad{ box-shadow:0 10px 22px rgba(239,68,68,.10) }
+.vpdHero .big{font-size:48px; letter-spacing:.2px}
+
+/* Barra inferior mobile (UX rápida) */
+.bottomBar{
+  position:fixed; left:0; right:0; bottom:0;
+  background:rgba(255,255,255,.92);
+  border-top:1px solid var(--line);
+  backdrop-filter: blur(10px);
+  display:none;
+  gap:6px;
+  padding:8px 10px;
+  z-index:999;
+}
+.bottomBar .tab{
+  flex:1;
+  border:1px solid var(--line);
+  background:#fff;
+  border-radius:14px;
+  padding:8px 6px;
+  font-weight:900;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+}
+.bottomBar .tab span{font-size:12px;color:var(--muted);font-weight:800}
+.bottomBar .tab.active{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  color:#fff;
+  border-color:transparent;
+}
+.bottomBar .tab.active span{color:#fff;opacity:.95}
+
+/* “Ações rápidas” fixas no mobile (Calcular/Voltar/Registrar) */
+.actionDock{
+  position:sticky;
+  bottom:0;
+  margin-top:10px;
+  padding-top:10px;
+  background:linear-gradient(180deg, rgba(255,255,255,0), rgba(255,255,255,.92) 30%, rgba(255,255,255,.92));
+  backdrop-filter: blur(10px);
+}
+.actionDock .row{gap:10px}
+
+/* Mobile behavior */
+@media(max-width:820px){
+  .bottomBar{display:flex}
+  .stage{height:calc(100vh - 170px)} /* espaço p/ bottomBar */
+  .right{display:none} /* simplifica topo no mobile */
+}
+
 
   </style>
+  
 </head>
+  <nav class="bottomBar" id="bottomBar" aria-label="Navegação">
+  <button class="tab active" data-go="screenHome">🏠<span>Home</span></button>
+  <button class="tab" data-go="screenMin">🌱<span>Minijardim</span></button>
+  <button class="tab" data-go="screenInv">🌿<span>Invernadero</span></button>
+  <button class="tab" data-go="screenHist">📚<span>Histórico</span></button>
+  <button class="tab" data-go="screenSOP">📄<span>SOP</span></button>
+</nav>
+
 
 <body>
   <div class="wrap app">
@@ -314,10 +416,13 @@
             <option>Outros</option>
           </select>
 
-          <div class="row" style="margin-top:12px;justify-content:space-between">
-            <button class="btn btnPrimary" id="minCalc">Calcular</button>
-            <button class="btn" id="minBack">Voltar</button>
-          </div>
+         <div class="actionDock">
+  <div class="row" style="margin-top:12px;justify-content:space-between">
+    <button class="btn btnPrimary" id="minCalc">Calcular</button>
+    <button class="btn" id="minBack">Voltar</button>
+  </div>
+</div>
+
 
           <p class="muted" style="margin-top:10px" id="minTip">
             Dica: medir na altura do dossel e usar o pior ponto como referência operacional.
@@ -328,7 +433,8 @@
         <div class="card half">
           <h3 id="minOutTitle">Minijardim — Resultado</h3>
 
-          <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+          <div class="vpdHero ok" id="minHero">
+
             <div>
               <div class="muted" id="minVpdLbl">VPD (kPa)</div>
               <div class="big" id="minVPD">—</div>
@@ -426,10 +532,13 @@
           <option>Outros</option>
         </select>
 
-        <div class="row" style="margin-top:12px;justify-content:space-between">
-          <button class="btn btnPrimary" id="invCalc">Calcular</button>
-          <button class="btn" id="invBack">Voltar</button>
-        </div>
+        <div class="actionDock">
+  <div class="row" style="margin-top:12px;justify-content:space-between">
+    <button class="btn btnPrimary" id="minCalc">Calcular</button>
+    <button class="btn" id="minBack">Voltar</button>
+  </div>
+</div>
+
 
         <p class="muted" style="margin-top:10px" id="invTip">
           Dica: use o pior ponto da fase como referência (evita subestimar estresse).
@@ -440,7 +549,8 @@
       <div class="card half">
         <h3 id="invOutTitle">Invernadero — Resultado</h3>
 
-        <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:10px">
+        <div class="vpdHero ok" id="invHero">
+
           <div>
             <div class="muted" id="invVpdLbl">VPD (kPa)</div>
             <div class="big" id="invVPD">—</div>
@@ -1290,6 +1400,19 @@ if (okMsg !== true){
     const b = vpdBand(vpd);
     $("minBadge").className = `badge ${b.cls}`;
     $("minBadge").textContent = bandLabel(b.key);
+    // ===== HERO visual (VPD grande) =====
+$("minVPD").classList.remove("ok","warn","bad");
+
+if (b.key === "ok") {
+  $("minVPD").classList.add("ok");
+}
+else if (b.key === "warn") {
+  $("minVPD").classList.add("warn");
+}
+else {
+  $("minVPD").classList.add("bad");
+}
+
 
     const warns = unusualWarnings(T, RH, PAR);
 let warnHTML = "";
@@ -1372,6 +1495,19 @@ if (!$("invIrrigChosen").value){
 
     $("invBadge").className = `badge ${r.bandCls}`;
     $("invBadge").textContent = bandLabel(r.bandKey);
+    // ===== HERO visual (VPD grande) =====
+$("invVPD").classList.remove("ok","warn","bad");
+
+if (r.bandKey === "ok") {
+  $("invVPD").classList.add("ok");
+}
+else if (r.bandKey === "warn") {
+  $("invVPD").classList.add("warn");
+}
+else {
+  $("invVPD").classList.add("bad");
+}
+
 
     $("invTimerPill").textContent = `${t("recheck")}: ${r.recheckMin} min`;
     startRecheckTimer("inv", r.recheckMin);
@@ -1625,6 +1761,29 @@ updateCalcButtons();
     `;
     $("sopBack").onclick = ()=>showScreen("screenHome");
   }
+  // ===== Bottom bar + estado =====
+function setActiveTab(screenId){
+  const bb = document.getElementById("bottomBar");
+  if (!bb) return;
+  bb.querySelectorAll(".tab").forEach(b=>{
+    b.classList.toggle("active", b.dataset.go === screenId);
+  });
+}
+
+document.getElementById("bottomBar")?.addEventListener("click",(e)=>{
+  const btn = e.target.closest(".tab");
+  if (!btn) return;
+  showScreen(btn.dataset.go);
+  setActiveTab(btn.dataset.go);
+});
+
+// Patch: garantir que showScreen sempre atualiza tab
+const _oldShowScreen = showScreen;
+showScreen = function(id){
+  _oldShowScreen(id);
+  setActiveTab(id);
+};
+
 
 </script>
 
