@@ -211,8 +211,8 @@
       <div class="brand">
         <div class="logo" aria-hidden="true"></div>
         <div>
-          <div class="title" id="appTitle">App Vivero PRO</div>
-          <div class="subtitle" id="appSubtitle">Minijardim & Invernadero · Operação segura</div>
+          <div class="title" id="appTitle">Viveiro 4.0</div>
+          <div class="subtitle" id="appSubtitle">Minijardim & Invernadero</div>
         </div>
       </div>
 
@@ -259,8 +259,23 @@
 
             <!-- CARD INFORMATIVO -->
             <div class="card half">
-              <h3 id="homeInfoTitle">Princípios de manejo</h3>
-              <p class="muted" id="homeInfoText">
+  <h3 id="homeInfoTitle">Padrão operacional</h3>
+
+  <div class="warnBox" style="margin:8px 0 10px">
+    <div class="warnIcon">⚠️</div>
+    <div class="warnText">
+      <b>Uso obrigatório no turno</b>
+      Padroniza decisão de microclima e registra ações para auditoria (reduz erro operacional).
+    </div>
+  </div>
+
+  <p class="muted" style="margin:0">
+    <b>Objetivo:</b> reduzir variação de manejo e evitar decisões impulsivas.<br>
+    <b>Como funciona:</b> leituras → VPD → recomendação (lucarna/laterais/malla) → checklist → registro.<br>
+    <b>Regra de ouro:</b> ventilação → sombreamento → água (só emergência) + registrar sempre.
+  </p>
+</div>
+
                 Ordem correta de controle ambiental:
                 <b>ventilação</b> → <b>sombreamento</b> → <b>água (apenas emergência)</b>.
                 Evite decisões impulsivas e sempre registre a ação.
@@ -477,6 +492,29 @@
               <div class="card" style="box-shadow:none;border-radius:14px" id="invRecipeBox">
                 <div class="muted" id="invRecipe">Preencha os dados e clique em “Calcular”.</div>
               </div>
+              <div class="hr"></div>
+
+<h3 style="margin:0 0 8px 0">Programa de irrigação (casa de vegetação)</h3>
+
+<div class="card" style="box-shadow:none;border-radius:14px">
+  <div class="muted" style="margin-bottom:6px">
+    Programa atual (automático por horário): <b id="invIrrigNow">—</b>
+  </div>
+
+  <div class="muted" style="margin-bottom:8px">
+    Recomendação do app: <b id="invIrrigRec">—</b>
+  </div>
+
+  <label style="margin-top:0">Programa executado (operador)</label>
+  <select id="invIrrigChosen">
+    <option value="">—</option>
+  </select>
+
+  <p class="muted" style="margin:8px 0 0">
+    *Se escolher diferente do recomendado, registre em “Observação”.
+  </p>
+</div>
+
 
               <div class="hr"></div>
 
@@ -803,6 +841,98 @@ setTimeout(()=>{
   // =========================
   // VPD + bandas
   // =========================
+  // =========================
+// =========================
+// IRRIGAÇÃO — Programas reais do viveiro
+// Aspersor por timer + Fogger por sensor
+// =========================
+
+const IRR_PROGRAMS = [
+  { id:"P1", start:8.0,  end:10.0, label:"P1 — Arranque suave", 
+    objetivo:"Evitar desidratação inicial", on:5, intervalo:20 },
+
+  { id:"P2", start:10.0, end:12.0, label:"P2 — Rad subiendo", 
+    objetivo:"Estabilidad hídrica", on:10, intervalo:20 },
+
+  { id:"P3", start:12.0, end:15.0, label:"P3 — Límite térmico", 
+    objetivo:"Máxima protección hídrica", on:10, intervalo:8 },
+
+  { id:"P4", start:15.0, end:16.0, label:"P4 — Límite tardío", 
+    objetivo:"Proteger sin saturar", on:10, intervalo:10 },
+
+  { id:"P5", start:16.0, end:17.5, label:"P5 — Tarde caliente", 
+    objetivo:"Sanitario (menos mojado)", on:10, intervalo:20 },
+
+  { id:"P6", start:17.5, end:19.5, label:"P6 — Extensión térmica", 
+    objetivo:"Solo control climático", on:8, intervalo:20 },
+
+  { id:"P7", start:19.5, end:21.0, label:"P7 — Ventana sanitaria", 
+    objetivo:"Secado y sanidad", on:0, intervalo:null }
+];
+
+function currentIrrProgram(){
+  const d = new Date();
+  const h = d.getHours() + d.getMinutes()/60;
+
+  return IRR_PROGRAMS.find(p => h >= p.start && h < p.end) || IRR_PROGRAMS[0];
+}
+
+function fillIrrigSelect(){
+  const sel = $("invIrrigChosen");
+  if (!sel || sel.dataset.ready === "1") return;
+
+  sel.innerHTML = `<option value="">—</option>`;
+  IRR_PROGRAMS.forEach(p=>{
+    const o = document.createElement("option");
+    o.value = p.id;
+    o.textContent = `${p.id} — ${p.label}`;
+    sel.appendChild(o);
+  });
+  sel.dataset.ready = "1";
+}
+
+function recommendIrrProgram(bandKey, currentId){
+  const idx = IRR_PROGRAMS.findIndex(p=>p.id===currentId);
+  const safe = (i)=>Math.max(0, Math.min(IRR_PROGRAMS.length-1, i));
+
+  if (bandKey==="crit") return IRR_PROGRAMS[safe(idx+1)].id;
+  if (bandKey==="wet")  return IRR_PROGRAMS[safe(idx-1)].id;
+
+  return currentId; // ok / warn mantém
+}
+
+
+function currentIrrProgram(){
+  const h = new Date().getHours();
+  for (const [a,b,name] of IRR_SCHEDULE){
+    if (h >= a && h < b) return name;
+  }
+  return IRR_SCHEDULE[0][2];
+}
+
+// Preenche select de escolha do operador (uma vez)
+function fillIrrigSelect(){
+  const sel = $("invIrrigChosen");
+  if (!sel || sel.dataset.ready === "1") return;
+
+  // limpa e recria mantendo o "—"
+  const first = sel.querySelector('option[value=""]') ? sel.querySelector('option[value=""]') : null;
+  sel.innerHTML = "";
+  const opt0 = document.createElement("option");
+  opt0.value = "";
+  opt0.textContent = "—";
+  sel.appendChild(opt0);
+
+  IRR_PROGRAM_LIST.forEach(p=>{
+    const o = document.createElement("option");
+    o.value = p;
+    o.textContent = p;
+    sel.appendChild(o);
+  });
+
+  sel.dataset.ready = "1";
+}
+
   function vpdBand(vpd){
     if (vpd <= 0.6) return {key:"wet", cls:"warn"};
     if (vpd <= 1.2) return {key:"ok", cls:"ok"};
@@ -1277,6 +1407,26 @@ if (warns.length){
 
 
 $("invRecipe").innerHTML = r.html + warnHTML;
+// ===== Irrigação automática =====
+fillIrrigSelect();
+
+const nowProg = currentIrrProgram();
+const recProgId = recommendIrrProgram(r.bandKey, nowProg.id);
+const recProg = IRR_PROGRAMS.find(p=>p.id===recProgId) || nowProg;
+
+$("invIrrigNow").innerHTML =
+  `<b>${nowProg.id}</b> — ${nowProg.label}<br>
+   <span class="muted">${nowProg.objetivo} · ${nowProg.on}s / ${nowProg.interval ?? "-"} min</span>`;
+
+$("invIrrigRec").innerHTML =
+  `<b>${recProg.id}</b> — ${recProg.label}<br>
+   <span class="muted">${recProg.objetivo}</span>`;
+
+// Sugere automaticamente se operador não escolheu ainda
+if (!$("invIrrigChosen").value){
+  $("invIrrigChosen").value = recProg.id;
+}
+
 
 
     $("invBadge").className = `badge ${r.bandCls}`;
@@ -1325,8 +1475,11 @@ $("invRecipe").innerHTML = r.html + warnHTML;
         <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.RH}</td>
         <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.PAR}</td>
         <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.VPD}</td>
-        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">${r.actions} · ${r.obs || ""}</td>
-      `;
+        <td style="padding:8px 6px;border-bottom:1px solid var(--line);font-size:12px">
+  ${r.actions} · ${r.obs || ""}<br>
+  <span class="muted">Irrig: ${r.irrigChosen || "—"} (Now: ${r.irrigNow || "—"} | Rec: ${r.irrigRec || "—"})</span>
+</td>
+
       tb.appendChild(tr);
     });
   }
@@ -1337,11 +1490,16 @@ $("invRecipe").innerHTML = r.html + warnHTML;
       alert(LANG==="es" ? "No hay registros." : "Não há registros.");
       return;
     }
-    const headers = ["FechaHora","Sector","Fase","Operador","Turno","Punto","T_C","UR_pct","PAR","VPD_kPa","Acciones","Observacion"];
+    const headers = ["FechaHora","Sector","Fase","Operador","Turno","Punto","T_C","UR_pct","PAR","VPD_kPa","Acciones","Observacion","IrrigNow","IrrigRec","IrrigChosen"];
+
     const rows = arr.map(r=>[
       r.ts, r.sector, r.phase||"", r.operator, r.shift, r.point, r.T, r.RH, r.PAR, r.VPD,
       (r.actions||"").replaceAll('"','""'),
-      (r.obs||"").replaceAll('"','""')
+      (r.obs||"").replaceAll('"','""'),
+            r.irrigNow || "",
+      r.irrigRec || "",
+      r.irrigChosen || ""
+
     ]);
     const csv = [headers.join(","), ...rows.map(row => row.map(v => `"${v}"`).join(","))].join("\n");
     const blob = new Blob([csv], {type:"text/csv;charset=utf-8;"});
@@ -1419,6 +1577,10 @@ const actionsRec = invLast.rec
       VPD: invLast.vpd.toFixed(2),
       obs: $("invObs").value,
       sopVersion: SOP_VERSION,
+            irrigNow: $("invIrrigNow")?.textContent || "",
+      irrigRec: $("invIrrigRec")?.textContent || "",
+      irrigChosen: $("invIrrigChosen")?.value || "",
+
       band: bandLabel(invLast.bandKey),
       recommendation: JSON.stringify(invLast.rec),
 
